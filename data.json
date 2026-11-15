@@ -283,16 +283,143 @@
     }
    ],
    "snow": null
+  },
+  "mitchell-creek": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Loop start, FS 8200 Grade Creek Rd",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.99677,
+     "lon": -120.15148,
+     "status": "none"
+    }
+   ],
+   "snow": null
+  },
+  "methow-sawtooth": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Foggy Dew Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 48.17926,
+     "lon": -120.25307,
+     "status": "none"
+    },
+    {
+     "name": "Crater Creek Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 48.22037,
+     "lon": -120.26789,
+     "status": "none"
+    }
+   ],
+   "snow": null
+  },
+  "ahtanum": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Red Saddle Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 46.51068,
+     "lon": -121.02082,
+     "status": "open"
+    },
+    {
+     "name": "Ahtanum Meadows Campground",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 46.52008,
+     "lon": -121.01252,
+     "status": "open"
+    }
+   ],
+   "snow": {
+    "station": "Green Lake",
+    "elevFt": 5920,
+    "miles": 7.6,
+    "depthIn": 4,
+    "date": "2026-11-14"
+   }
+  },
+  "reiter": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Reiter Foothills Motorized P1",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.83087,
+     "lon": -121.60431,
+     "status": "open"
+    },
+    {
+     "name": "Reiter Foothills Motorized P2",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.8255,
+     "lon": -121.6026,
+     "status": "open"
+    }
+   ],
+   "snow": null
+  },
+  "walker-valley": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Walker Valley ORV Trailhead",
+     "check": "ok",
+     "movedM": 2,
+     "lat": 48.37549,
+     "lon": -122.16962,
+     "status": "open"
+    }
+   ],
+   "snow": {
+    "station": "Deer Pass",
+    "elevFt": 3360,
+    "miles": 20.8,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
+  "elbe-hills": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Elbe Hills ORV Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 46.78271,
+     "lon": -122.08251,
+     "status": "open"
+    }
+   ],
+   "snow": {
+    "station": "Mowich",
+    "elevFt": 3170,
+    "miles": 11.8,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
   }
  },
  "sources": {
-  "osm": "ok, 138 segments",
-  "usfs_trails": "ok, 58 segments, 41 trails",
+  "osm": "ok, 200 segments",
+  "usfs_trails": "ok, 65 segments, 48 trails",
+  "usfs_orv_roads": "ok, 1 roads",
   "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
-  "branches": "ok, 1034 segments",
+  "branches": "ok, 1066 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 69 alerts scanned",
-  "snotel": "ok, 10 spots near a station, 3 readings"
+  "snotel": "ok, 16 spots near a station, 6 readings"
  }
 }
