@@ -133,7 +133,8 @@
   <ul class="rules">
     <li>In Washington, Sur-Rons and Talarias count as off-road motorcycles, not e-bikes. They need a WA ORV tag from the Department of Licensing.</li>
     <li>Only ride trails and roads marked open to motorcycles. Mountain bike and hiking trails are off limits.</li>
-    <li>Forest Service trailheads need a Northwest Forest Pass or the day fee. DNR land (Naneum Ridge, Beverly Dunes) needs a Discover Pass.</li>
+    <li>Forest Service trailheads need a Northwest Forest Pass or the day fee (the upper Devils Gulch and Mission Ridge trailheads have no fee). DNR land (Naneum, Stemilt/Colockum, Beverly Dunes) needs a Discover Pass.</li>
+    <li>Green-dot roads (green on the map) are open to ORVs. Roads shown gray-blue are street-legal only.</li>
     <li>Not street legal: you can't ride on paved county roads to get to a trailhead.</li>
   </ul>
 </main>
@@ -155,7 +156,7 @@ let SPOTS = [], DATA = {spots:{}}, overrides = {}, statusDate = null;
 const HOME = {lat:47.4235, lon:-120.3103, label:"Wenatchee (default)"};
 const COND_RANK = {"Dry":5,"Damp – good traction":5,"Dry, dusty":4,"Muddy":2,"Patchy snow":2,"Snow on ground":1,"Unknown":3};
 const DIFF_WORDS = ["","Easy","Easy–moderate","Moderate","Hard","Expert"];
-const SRC_WORDS = {usfs:"Forest Service official trailhead", dnr:"DNR official site", multi:"Several sources agree"};
+const SRC_WORDS = {usfs:"Forest Service official trailhead", dnr:"DNR official site", parks:"WA State Parks official location", multi:"Several sources agree"};
 let me = null, weather = {};
 const $ = s => document.querySelector(s);
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -246,7 +247,7 @@ function parkingHTML(s){
   const checked=DATA.updated?` Checked ${DATA.updated}.`:"";
   return ps.map(p=>{
     const ok = p.check==="ok"||p.check==="moved" ? `<span class="ok">✓ Matches the official record.${checked}</span>`
-             : p.check==="multi-source" ? `<span class="ok">✓ ${esc(p.srcNote||"Several sources agree")}</span>`
+             : p.check==="multi-source"||p.check==="official" ? `<span class="ok">✓ ${esc(p.srcNote||"Several sources agree")}</span>`
              : p.check==="missing" ? `<span class="bad">⚠ Official record not found in the last check</span>` : "";
     return `<div class="pk"><b>${esc(p.name)}</b>${p.siteStatus==="closed"?' <span class="bad">(marked closed)</span>':""}<br>
       ${esc(p.road||"")}${p.fee?` Fee: ${esc(p.fee)}.`:""}<br>
@@ -369,9 +370,11 @@ function initMap(){
   loadTrails();
   loadTrack();
 }
-function trailKey(p){ return p.src==="usfs" ? "fs"+p.no : (p.name||p.ref||"osm"+p.id); }
-function trailTitle(p){ return p.src==="usfs" ? `${p.name} #${p.no}` : `${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}`; }
+const GD_COLOR="#2b8a3e";
+function trailKey(p){ return p.src==="usfs" ? "fs"+p.no : p.src==="greendot" ? "gd"+(p.name||"") : (p.name||p.ref||"osm"+p.id); }
+function trailTitle(p){ return p.src==="usfs" ? `${p.name} #${p.no}` : p.src==="greendot" ? (p.name?p.name+" (green dot)":"Green-dot road") : `${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}`; }
 function baseStyle(f){ const p=f.properties, track=p.hw==="track";
+  if(p.src==="greendot") return {color:GD_COLOR, weight:3.5, opacity:.9, dashArray:p.seasonal?"8 5":null};
   return {color:p.src==="usfs"?TRAIL_COLOR:OSM_COLOR, weight:track?3:3.5, opacity:.9, dashArray:track?"6 5":null}; }
 async function loadTrails(){
   if(trailsGeo) return;
@@ -381,21 +384,23 @@ async function loadTrails(){
       onEachFeature:(f,l)=>{
         l.on("click",e=>{ tap=e.latlng; highlightTrail(trailKey(f.properties),false); });
         const p=f.properties;
-        const body=p.src==="usfs"
+        const body=p.src==="greendot"
+          ? `Green-dot road – open to ORVs (DNR / WDFW)${p.seasonal?"<br><b>Seasonal:</b> closed Mar 1 – Apr 15 in Naneum/Colockum (check the map legend for other areas)":""}`
+          : p.src==="usfs"
           ? `Official Forest Service route<br>Motorcycles allowed per: ${esc(p.why)}`
           : `${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+esc(p.surface):""}<br>Motorcycles: ${esc(p.moto||"see signs")} (OpenStreetMap)`;
         l.bindPopup(()=>`<b>${esc(trailTitle(p))}</b><br>${body}<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(trailTitle(p)).replace(/'/g,"&#39;")}')">➜ Route here</button>`);
       }}).addTo(map);
     labelLayer=L.layerGroup().addTo(map);
-    $("#mapInfo").innerHTML=`<span class="lg" style="background:${TRAIL_COLOR}"></span>Motorcycle trail (Forest Service) <span class="lg" style="background:${OSM_COLOR}"></span>Motorcycle trail (OpenStreetMap) <span class="lg gray"></span>Branch trail – motorcycles not confirmed <b style="color:#2f5fb3">P</b> parking`;
+    $("#mapInfo").innerHTML=`<span class="lg" style="background:${TRAIL_COLOR}"></span>Motorcycle trail (Forest Service) <span class="lg" style="background:${OSM_COLOR}"></span>Motorcycle trail (OpenStreetMap) <span class="lg" style="background:${GD_COLOR}"></span>Green-dot road (ORV OK) <span class="lg" style="background:#4a6fa5"></span>Street-legal only <span class="lg gray"></span>Branch trail – motorcycles not confirmed <b style="color:#2f5fb3">P</b> parking`;
     if(focusId) focusSpot(focusId);
   }catch(e){ $("#mapInfo").textContent="Trail lines didn't load. The topo map still shows trails as thin dashed lines."; }
   try{
     const b=await loadJSON("branches.geojson"); branchesGeo=b; graph=null;
-    branchLayer=L.geoJSON(b,{style:{color:"#5f6368",weight:2.5,opacity:.8,dashArray:"3 6"},
+    branchLayer=L.geoJSON(b,{style:f=>f.properties.street?{color:"#4a6fa5",weight:3,opacity:.85}:{color:"#5f6368",weight:2.5,opacity:.8,dashArray:"3 6"},
       onEachFeature:(f,l)=>{ const p=f.properties;
         l.on("click",e=>{ tap=e.latlng; });
-        l.bindPopup(()=>`<b>${esc(p.name||"Unnamed trail")}${p.ref?" ("+esc(p.ref)+")":""}</b><br>Branch trail. <b>Motorcycle use not confirmed</b> by the Forest Service or OpenStreetMap.${p.old?"<br>Formerly "+esc(p.old)+".":""}<br>Check the signs before riding it.<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(p.name||"this branch").replace(/'/g,"&#39;")}')">➜ Route here</button>`); }});
+        l.bindPopup(()=>p.street ? `<b>${esc(p.name||"Access road")}</b><br><b>Street-legal vehicles only</b> (DNR/WDFW road management area access road). A bike without a plate can't ride it.<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(p.name||"this road").replace(/'/g,"&#39;")}')">➜ Route here</button>` : `<b>${esc(p.name||"Unnamed trail")}${p.ref?" ("+esc(p.ref)+")":""}</b><br>Branch trail. <b>Motorcycle use not confirmed</b> by the Forest Service or OpenStreetMap.${p.old?"<br>Formerly "+esc(p.old)+".":""}<br>Check the signs before riding it.<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(p.name||"this branch").replace(/'/g,"&#39;")}')">➜ Route here</button>`); }});
     if(map.getZoom()>=12) branchLayer.addTo(map);
     if(trailLayer) trailLayer.bringToFront();
   }catch(e){}
@@ -555,7 +560,7 @@ function buildGraph(){
   const addEdge=(a,b,info)=>{ if(a===b||linked(a,b)) return; const d=len(nodes.get(a),nodes.get(b)); adj.get(a).push([b,d,info]); adj.get(b).push([a,d,info]); };
   const ends=new Set();
   feats.forEach(([f,ok],fi)=>{
-    const p=f.properties, info={t:ok?trailTitle(p):(p.name||(p.hw==="track"?"Dirt road":"Unnamed trail"))+(p.ref&&!ok?" ("+p.ref+")":""), ok};
+    const p=f.properties, info={t:ok?trailTitle(p):(p.name||(p.street?"Access road":p.hw==="track"?"Dirt road":"Unnamed trail"))+(p.street?" (street-legal only)":"")+(p.ref&&!ok?" ("+p.ref+")":""), ok};
     const cs=f.geometry.coordinates; let prev=null;
     cs.forEach((c,i)=>{ const k=node(c[0],c[1],fi); if(prev) addEdge(prev,k,info); prev=k; if(i===0||i===cs.length-1) ends.add(k); });
   });

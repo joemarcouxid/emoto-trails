@@ -1,192 +1,643 @@
 {
-  "about": "Riding spots. Every parking entry must come from an official source (Forest Service or DNR) or from 2+ independent sources that agree. src: usfs = Forest Service recreation site id, dnr = DNR recreation site name, multi = several sources agree.",
-  "spots": [
+ "about": "Riding spots. Every parking entry must come from an official source (Forest Service or DNR) or from 2+ independent sources that agree. src: usfs = Forest Service recreation site id, dnr = DNR recreation site name, multi = several sources agree.",
+ "spots": [
+  {
+   "id": "devils-gulch",
+   "name": "Devils Gulch Trailhead",
+   "area": "Mission Creek Rd, south of Cashmere",
+   "lat": 47.39551,
+   "lon": -120.50062,
+   "season": null,
+   "diff": 3,
+   "rating": 4,
+   "ratingSrc": "Singletracks (Red Hill #1223)",
+   "trails": "Devils Gulch #1220, lower Mission Ridge #1201, Red Devil #1221, Red Hill #1223",
+   "trailNos": [
+    "1220",
+    "1201",
+    "1221",
+    "1223",
+    "1223.1"
+   ],
+   "keywords": [
+    "Devils Gulch",
+    "Red Devil",
+    "Red Hill",
+    "1220",
+    "1221",
+    "1223"
+   ],
+   "notes": "Closest motorcycle trail system to Wenatchee. Upper Red Hill closes Oct 15 – Jun 15 for elk calving; the rest stays open but gets snow up high in winter.",
+   "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag",
+   "parking": [
     {
-      "id": "devils-gulch", "name": "Devils Gulch Trailhead", "area": "Mission Creek Rd, south of Cashmere",
-      "lat": 47.39551, "lon": -120.50062, "season": null,
-      "diff": 3, "rating": 4, "ratingSrc": "Singletracks (Red Hill #1223)",
-      "trails": "Devils Gulch #1220, lower Mission Ridge #1201, Red Devil #1221, Red Hill #1223",
-      "trailNos": ["1220", "1201", "1221", "1223", "1223.1"],
-      "keywords": ["Devils Gulch", "Red Devil", "Red Hill", "1220", "1221", "1223"],
-      "notes": "Closest motorcycle trail system to Wenatchee. Upper Red Hill closes Oct 15 – Jun 15 for elk calving; the rest stays open but gets snow up high in winter.",
-      "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag",
-      "parking": [
-        {"name": "Devils Gulch ORV Trailhead", "lat": 47.39551, "lon": -120.50062, "src": "usfs", "srcId": 58721,
-         "road": "On Mission Creek Rd, about 10 miles south of Cashmere.", "fee": "$5/vehicle/day",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58721"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"], ["Trail map (PDF)", "https://www.fs.usda.gov/media/232877"]]
-    },
-    {
-      "id": "beehive", "name": "Beehive / Upper Devils Gulch", "area": "Liberty-Beehive Rd (FR 9712), above Wenatchee",
-      "lat": 47.32491, "lon": -120.40201, "season": [6, 1, 10, 31], "seasonNote": "Snow usually blocks the road Nov – May",
-      "diff": 2, "rating": null,
-      "trails": "Beehive #1202 (beginner), upper Devils Gulch #1220, Devils Spur #1203",
-      "trailNos": ["1202", "1203", "1220"],
-      "keywords": ["Beehive", "Devils Spur", "1202", "1203", "9712"],
-      "notes": "Higher start for the same system. Beehive #1202 is short and easy.",
-      "pass": "Northwest Forest Pass + ORV tag",
-      "parking": [
-        {"name": "Beehive ORV Trailhead", "lat": 47.32491, "lon": -120.40201, "src": "usfs", "srcId": 58655,
-         "road": "Off Liberty-Beehive Rd (FR 9712) at Beehive Reservoir. Gravel road.",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58655"},
-        {"name": "Upper Devils Gulch ORV Trailhead", "lat": 47.32771, "lon": -120.40681, "src": "usfs", "srcId": 59053,
-         "road": "Just west of Beehive Reservoir.",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59053"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"], ["Trail map (PDF)", "https://www.fs.usda.gov/media/232877"]]
-    },
-    {
-      "id": "mission-ridge", "name": "Mission Ridge Trailhead", "area": "FR 9712 past Beehive Reservoir, below Mission Peak",
-      "lat": 47.30501, "lon": -120.43601, "season": [6, 1, 10, 31], "seasonNote": "High elevation. Snow usually blocks the road Nov – May",
-      "diff": 4, "rating": null,
-      "trails": "Mission Ridge #1201 (rated advanced). The trail starts right at this trailhead.",
-      "trailNos": ["1201"],
-      "keywords": ["Mission Ridge", "1201", "9712"],
-      "notes": "Upper end of Mission Ridge #1201. Mission Peak is about 1.5 miles south. Not the ski area lot.",
-      "pass": "Northwest Forest Pass + ORV tag",
-      "parking": [
-        {"name": "Mission Ridge Trailhead", "lat": 47.30501, "lon": -120.43601, "src": "usfs", "srcId": 58897,
-         "road": "Take Liberty-Beehive Rd (FR 9712) past Beehive Reservoir, a little over 2 miles. Past the reservoir it's a dirt road for high-clearance vehicles.",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58897"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"], ["Trail map (PDF)", "https://www.fs.usda.gov/media/232877"]]
-    },
-    {
-      "id": "tronsen", "name": "Tronsen Ridge", "area": "East of Blewett Pass, Hwy 97",
-      "lat": 47.33383, "lon": -120.52675, "season": [6, 16, 10, 14], "seasonNote": "Closed Oct 15 – Jun 15 for elk calving",
-      "diff": 4, "rating": null,
-      "trails": "Tronsen Ridge #1204, Tronsen Meadow #1205",
-      "trailNos": ["1204", "1205"],
-      "keywords": ["Tronsen", "1204", "1205"],
-      "notes": "Ridge riding with big views. Three trailheads, so you can start from either end.",
-      "pass": "ORV tag",
-      "parking": [
-        {"name": "Upper Tronsen Ridge ORV Trailhead", "lat": 47.33383, "lon": -120.52675, "src": "usfs", "srcId": 59059,
-         "road": "No fee.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59059"},
-        {"name": "Tronsen Ridge ORV Trailhead", "lat": 47.32794, "lon": -120.5517, "src": "usfs", "srcId": 59035,
-         "road": "Near Blewett Pass.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59035"},
-        {"name": "Ruby Creek ORV Trailhead (north end)", "lat": 47.40994, "lon": -120.60412, "src": "usfs", "srcId": 58973,
-         "road": "North end of Tronsen Ridge #1204.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58973"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]
-    },
-    {
-      "id": "mad-river", "name": "Mad River Trails", "area": "Entiat Mountains, above Ardenvoir",
-      "lat": 47.75895, "lon": -120.42654, "season": [7, 1, 10, 31], "seasonNote": "Usually under snow Nov – June. Upper Mad River and Blue Creek open only when posted",
-      "diff": 3, "rating": null,
-      "trails": "Mad River #1409, Upper Mad River #1409.1, Blue Creek #1426, Devils Backbone #1448",
-      "trailNos": ["1409", "1409.1", "1426", "1448"],
-      "keywords": ["Mad River", "Blue Creek", "Devils Backbone", "1409", "1426", "1448"],
-      "notes": "Big single-track network maintained mainly for motorcycles and mountain bikes.",
-      "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag",
-      "parking": [
-        {"name": "Mad River Trailhead - Lower", "lat": 47.75895, "lon": -120.42654, "src": "usfs", "srcId": 58011,
-         "road": "Bring cash or a check for the day fee.", "fee": "$5/day/vehicle",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58011"},
-        {"name": "Mad River Trailhead - Upper", "lat": 47.84081, "lon": -120.60412, "src": "usfs", "srcId": 58087,
-         "road": "Upper Mad River and side trails.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58087"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"], ["Trail brochure (PDF)", "https://www.fs.usda.gov/media/243318"]]
-    },
-    {
-      "id": "chiwawa", "name": "Chiwawa / Alder Ridge ORV Trails", "area": "Chiwawa River Rd, north of Lake Wenatchee",
-      "lat": 47.91666, "lon": -120.71771, "season": [7, 1, 10, 31], "seasonNote": "Alder Ridge and Upper Chikamin close each spring and open only when posted",
-      "diff": 3, "rating": null,
-      "trails": "Lower Chiwawa #1548, Minnow Ridge #1524, Chikamin Creek #1534, Alder Ridge #1523, Chikamin Tie #1561",
-      "trailNos": ["1548", "1524", "1534", "1523", "1561"],
-      "keywords": ["Chiwawa", "Chikamin", "Minnow Ridge", "Alder Ridge", "1548", "1524", "1534", "1523", "1561"],
-      "notes": "Several ORV trails maintained for motorcycles. Goose Creek Campground nearby is a common motorcycle base.",
-      "pass": "Northwest Forest Pass + ORV tag",
-      "parking": [
-        {"name": "Chikamin ORV Trailhead", "lat": 47.91666, "lon": -120.71771, "src": "usfs", "srcId": 58699,
-         "road": "Minnow Ridge, Chikamin Creek and Lower Chiwawa trails.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58699"},
-        {"name": "Alder Ridge ORV Trailhead", "lat": 47.85121, "lon": -120.66101, "src": "usfs", "srcId": 58635,
-         "road": "Alder Ridge #1523.", "fee": "$5/day/vehicle", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58635"},
-        {"name": "Chikamin Tie ORV Trailhead", "lat": 47.98051, "lon": -120.70201, "src": "usfs", "srcId": 58701,
-         "road": "Chikamin Tie #1561 to the Upper Mad River area.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58701"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"], ["Alder Ridge trail", "https://www.fs.usda.gov/r06/okanogan-wenatchee/recreation/trails/alder-ridge-orv-trail"]]
-    },
-    {
-      "id": "naneum", "name": "Naneum Ridge State Forest", "area": "South of Wenatchee via Colockum / Naneum",
-      "lat": 47.18, "lon": -120.38, "season": null, "seasonNote": "Some green-dot roads close Mar 1 – Apr 15. Snow trails groomed for sleds Dec 15 – Apr 1",
-      "diff": 2, "rating": null, "techSrc": "onX tech rating 3 (easy)",
-      "trails": "109 miles of green-dot roads (dirt roads, not single track)",
-      "trailNos": [],
-      "keywords": ["Naneum", "Colockum", "Stemilt", "Coleman", "Cooke Canyon"],
-      "notes": "Ride only roads with a green dot marker. Some roads are street-legal only, so check the DNR map. Active logging in the Coleman and Stemilt areas through Oct 2026.",
-      "pass": "Discover Pass + ORV tag",
-      "parking": [],
-      "noParking": "DNR doesn't list a motorized trailhead here. People use pullouts along green-dot roads. Use the DNR green dot map to plan.",
-      "links": [["DNR page & alerts", "https://dnr.wa.gov/forest-and-trust-lands/naneum-ridge-state-forest"], ["Green dot map (PDF)", "https://dnr.wa.gov/geo/naneumcolockum.pdf"]]
-    },
-    {
-      "id": "taneum", "name": "Taneum / Manastash Trails", "area": "West of Ellensburg",
-      "lat": 47.09514, "lon": -120.98704, "season": [6, 15, 11, 15], "seasonNote": "Spring closure until about June 15; snow late fall",
-      "diff": 3, "rating": null,
-      "trails": "South Fork Taneum #1367, North Fork Taneum #1377, Manastash Ridge #1388, Taneum Ridge #1363",
-      "trailNos": ["1367", "1377", "1388", "1363"],
-      "keywords": ["Taneum", "Manastash", "1367", "1377", "1388", "1363"],
-      "notes": "Large motorcycle trail network. Icewater Creek Campground has a beginner motorcycle loop (campground is closed for the season now).",
-      "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag. Discover Pass is not valid here.",
-      "parking": [
-        {"name": "South Fork Meadow Trailhead", "lat": 47.09514, "lon": -120.98704, "src": "usfs", "srcId": 57811,
-         "road": "South Fork Taneum #1367.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=57811"},
-        {"name": "Manastash Trailhead", "lat": 47.02489, "lon": -120.93795, "src": "usfs", "srcId": 57655,
-         "road": "Manastash Ridge #1388. Fee tubes at Manastash Camp.", "fee": "$5/vehicle/day",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=57655"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]
-    },
-    {
-      "id": "little-naches", "name": "Little Naches OHV Area", "area": "Off Hwy 410, west of Naches",
-      "lat": 47.02738, "lon": -121.15316, "season": [6, 15, 10, 31], "seasonNote": "Spring closure until about June 15; campgrounds close in fall",
-      "diff": 3, "rating": null,
-      "trails": "Single track leaving right from the campgrounds",
-      "trailNos": [],
-      "keywords": ["Little Naches", "Kaner Flat", "Crow Creek", "Longmire"],
-      "notes": "Popular motorcycle area with OHV staging and campgrounds next to the trails. Farther drive (about 2.5 hours).",
-      "pass": "Staging fee or Northwest Forest Pass, plus ORV tag",
-      "parking": [
-        {"name": "Longmire Meadow OHV staging", "lat": 47.02738, "lon": -121.15316, "src": "usfs", "srcId": 58361,
-         "road": "OHV staging area with vault toilet.", "fee": "$8 per vehicle per day",
-         "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58361"},
-        {"name": "Kaner Flat Campground", "lat": 47.01101, "lon": -121.13001, "src": "usfs", "srcId": 58311,
-         "road": "Campground with RV loop.", "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58311"}
-      ],
-      "links": [["Forest Service alerts", "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]
-    },
-    {
-      "id": "moses-dunes", "name": "Moses Lake Sand Dunes", "area": "Grant County ORV area, south of Moses Lake",
-      "lat": 47.0632, "lon": -119.3204, "season": null, "seasonNote": "Open year-round",
-      "diff": 2, "rating": null,
-      "trails": "About 3,000 acres of open dunes",
-      "trailNos": [],
-      "keywords": ["Moses Lake Sand Dunes"],
-      "notes": "Best winter option. No alcohol allowed. A paddle tire helps. Don't ride on county or canal roads.",
-      "pass": "ORV tag",
-      "parking": [
-        {"name": "Dune entrance, Sand Dune Rd", "lat": 47.0706, "lon": -119.2798, "src": "multi",
-         "srcNote": "3 separate sources agree within 50 m (Timber Tamers club, Campendium, Overland Bound)",
-         "road": "Park along the gravel road. Parking is on sand, so watch for soft spots. 2026: the Hansen Rd overpass at I-90 Exit 174 is closed; use Exit 169 if coming from the east."}
-      ],
-      "links": [["Rider reports", "https://riderplanet-usa.com/atv/trails/info/washington_05789/ride_42fc.htm"]]
-    },
-    {
-      "id": "beverly", "name": "Beverly Dunes ORV Area", "area": "Lower Crab Creek Rd, near Beverly",
-      "lat": 46.83032, "lon": -119.89313, "season": null, "seasonNote": "Open year-round",
-      "diff": 2, "rating": null,
-      "trails": "About 300 acres of sandy trails and bowls",
-      "trailNos": [],
-      "keywords": ["Beverly"],
-      "notes": "Smaller and quieter than Moses Lake. Good for all ages.",
-      "pass": "Discover Pass + ORV tag",
-      "parking": [
-        {"name": "Beverly Dunes ORV Area (DNR)", "lat": 46.83032, "lon": -119.89313, "src": "dnr", "srcId": "Beverly Dunes ORV Area",
-         "road": "Off Lower Crab Creek Rd, about 2 miles east of the Hwy 243 turn. Staging area is on the south side."}
-      ],
-      "links": [["DNR recreation map", "https://dnr.wa.gov/recreation/where-go-what-do"]]
+     "name": "Devils Gulch ORV Trailhead",
+     "lat": 47.39551,
+     "lon": -120.50062,
+     "src": "usfs",
+     "srcId": 58721,
+     "road": "On Mission Creek Rd, about 10 miles south of Cashmere.",
+     "fee": "$5/vehicle/day",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58721"
     }
-  ]
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ],
+    [
+     "Trail map (PDF)",
+     "https://www.fs.usda.gov/media/232877"
+    ]
+   ]
+  },
+  {
+   "id": "beehive",
+   "name": "Upper Devils Gulch / Beehive (via Squilchuck Rd)",
+   "area": "Squilchuck Rd → FR 9712, above Wenatchee",
+   "lat": 47.32771,
+   "lon": -120.40681,
+   "season": [
+    6,
+    1,
+    10,
+    31
+   ],
+   "seasonNote": "Snow usually blocks the road Nov – May",
+   "diff": 2,
+   "rating": null,
+   "trails": "Upper Devils Gulch #1220, Beehive #1202 (beginner), Devils Spur #1203, Mission Ridge #1201 nearby",
+   "trailNos": [
+    "1202",
+    "1203",
+    "1220"
+   ],
+   "keywords": [
+    "Beehive",
+    "Devils Spur",
+    "Upper Devils Gulch",
+    "1202",
+    "1203",
+    "9712"
+   ],
+   "notes": "The quick way into Devils Gulch from Wenatchee. Drive up Squilchuck Rd toward Mission Ridge, go 1 mile past Squilchuck State Park, turn right on FR 9712 (Beehive Reservoir Rd), and drive about 4.3 miles. Devils Spur #1203 runs from FR 9712 down toward Squilchuck Rd. Squilchuck Rd itself is street-legal only, so trailer the bike to the trailhead.",
+   "pass": "No fee at the upper trailheads. ORV tag required.",
+   "parking": [
+    {
+     "name": "Upper Devils Gulch ORV Trailhead",
+     "lat": 47.32771,
+     "lon": -120.40681,
+     "src": "usfs",
+     "srcId": 59053,
+     "road": "From Squilchuck Rd, 1 mile past Squilchuck State Park turn right on FR 9712 (Beehive Reservoir Rd), then about 4.3 miles. No fee.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59053"
+    },
+    {
+     "name": "Beehive ORV Trailhead",
+     "lat": 47.32491,
+     "lon": -120.40201,
+     "src": "usfs",
+     "srcId": 58655,
+     "road": "At Beehive Reservoir on FR 9712, just past the Upper Devils Gulch lot.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58655"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ],
+    [
+     "Trail map (PDF)",
+     "https://www.fs.usda.gov/media/232877"
+    ]
+   ]
+  },
+  {
+   "id": "mission-ridge",
+   "name": "Mission Ridge Trailhead",
+   "area": "FR 9712 off Squilchuck Rd, below Mission Peak",
+   "lat": 47.30501,
+   "lon": -120.43601,
+   "season": [
+    6,
+    1,
+    10,
+    31
+   ],
+   "seasonNote": "High elevation. Snow usually blocks the road Nov – May",
+   "diff": 4,
+   "rating": null,
+   "trails": "Mission Ridge #1201 (rated advanced). The trail starts right at this trailhead.",
+   "trailNos": [
+    "1201"
+   ],
+   "keywords": [
+    "Mission Ridge",
+    "1201",
+    "9712"
+   ],
+   "notes": "Upper end of Mission Ridge #1201. Mission Peak is about 1.5 miles south. Not the ski area lot.",
+   "pass": "No fee at the upper trailheads. ORV tag required.",
+   "parking": [
+    {
+     "name": "Mission Ridge Trailhead",
+     "lat": 47.30501,
+     "lon": -120.43601,
+     "src": "usfs",
+     "srcId": 58897,
+     "road": "Same route as Upper Devils Gulch: Squilchuck Rd, then right on FR 9712 past Squilchuck State Park. Mission Ridge Trailhead is about 1.9 miles past the Upper Devils Gulch lot, a little over 2 miles past Beehive Reservoir. Past the reservoir FR 9712 is a dirt road for high-clearance vehicles.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58897"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ],
+    [
+     "Trail map (PDF)",
+     "https://www.fs.usda.gov/media/232877"
+    ]
+   ]
+  },
+  {
+   "id": "tronsen",
+   "name": "Tronsen Ridge",
+   "area": "East of Blewett Pass, Hwy 97",
+   "lat": 47.33383,
+   "lon": -120.52675,
+   "season": [
+    6,
+    16,
+    10,
+    14
+   ],
+   "seasonNote": "Closed Oct 15 – Jun 15 for elk calving",
+   "diff": 4,
+   "rating": null,
+   "trails": "Tronsen Ridge #1204, Tronsen Meadow #1205",
+   "trailNos": [
+    "1204",
+    "1205"
+   ],
+   "keywords": [
+    "Tronsen",
+    "1204",
+    "1205"
+   ],
+   "notes": "Ridge riding with big views. Three trailheads, so you can start from either end.",
+   "pass": "ORV tag",
+   "parking": [
+    {
+     "name": "Upper Tronsen Ridge ORV Trailhead",
+     "lat": 47.33383,
+     "lon": -120.52675,
+     "src": "usfs",
+     "srcId": 59059,
+     "road": "No fee.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59059"
+    },
+    {
+     "name": "Tronsen Ridge ORV Trailhead",
+     "lat": 47.32794,
+     "lon": -120.5517,
+     "src": "usfs",
+     "srcId": 59035,
+     "road": "Near Blewett Pass.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59035"
+    },
+    {
+     "name": "Ruby Creek ORV Trailhead (north end)",
+     "lat": 47.40994,
+     "lon": -120.60412,
+     "src": "usfs",
+     "srcId": 58973,
+     "road": "North end of Tronsen Ridge #1204.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58973"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ]
+   ]
+  },
+  {
+   "id": "mad-river",
+   "name": "Mad River Trails",
+   "area": "Entiat Mountains, above Ardenvoir",
+   "lat": 47.75895,
+   "lon": -120.42654,
+   "season": [
+    7,
+    1,
+    10,
+    31
+   ],
+   "seasonNote": "Usually under snow Nov – June. Upper Mad River and Blue Creek open only when posted",
+   "diff": 3,
+   "rating": null,
+   "trails": "Mad River #1409, Upper Mad River #1409.1, Blue Creek #1426, Devils Backbone #1448",
+   "trailNos": [
+    "1409",
+    "1409.1",
+    "1426",
+    "1448"
+   ],
+   "keywords": [
+    "Mad River",
+    "Blue Creek",
+    "Devils Backbone",
+    "1409",
+    "1426",
+    "1448"
+   ],
+   "notes": "Big single-track network maintained mainly for motorcycles and mountain bikes.",
+   "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag",
+   "parking": [
+    {
+     "name": "Mad River Trailhead - Lower",
+     "lat": 47.75895,
+     "lon": -120.42654,
+     "src": "usfs",
+     "srcId": 58011,
+     "road": "Bring cash or a check for the day fee.",
+     "fee": "$5/day/vehicle",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58011"
+    },
+    {
+     "name": "Mad River Trailhead - Upper",
+     "lat": 47.84081,
+     "lon": -120.60412,
+     "src": "usfs",
+     "srcId": 58087,
+     "road": "Upper Mad River and side trails.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58087"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ],
+    [
+     "Trail brochure (PDF)",
+     "https://www.fs.usda.gov/media/243318"
+    ]
+   ]
+  },
+  {
+   "id": "chiwawa",
+   "name": "Chiwawa / Alder Ridge ORV Trails",
+   "area": "Chiwawa River Rd, north of Lake Wenatchee",
+   "lat": 47.91666,
+   "lon": -120.71771,
+   "season": [
+    7,
+    1,
+    10,
+    31
+   ],
+   "seasonNote": "Alder Ridge and Upper Chikamin close each spring and open only when posted",
+   "diff": 3,
+   "rating": null,
+   "trails": "Lower Chiwawa #1548, Minnow Ridge #1524, Chikamin Creek #1534, Alder Ridge #1523, Chikamin Tie #1561",
+   "trailNos": [
+    "1548",
+    "1524",
+    "1534",
+    "1523",
+    "1561"
+   ],
+   "keywords": [
+    "Chiwawa",
+    "Chikamin",
+    "Minnow Ridge",
+    "Alder Ridge",
+    "1548",
+    "1524",
+    "1534",
+    "1523",
+    "1561"
+   ],
+   "notes": "Several ORV trails maintained for motorcycles. Goose Creek Campground nearby is a common motorcycle base.",
+   "pass": "Northwest Forest Pass + ORV tag",
+   "parking": [
+    {
+     "name": "Chikamin ORV Trailhead",
+     "lat": 47.91666,
+     "lon": -120.71771,
+     "src": "usfs",
+     "srcId": 58699,
+     "road": "Minnow Ridge, Chikamin Creek and Lower Chiwawa trails.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58699"
+    },
+    {
+     "name": "Alder Ridge ORV Trailhead",
+     "lat": 47.85121,
+     "lon": -120.66101,
+     "src": "usfs",
+     "srcId": 58635,
+     "road": "Alder Ridge #1523.",
+     "fee": "$5/day/vehicle",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58635"
+    },
+    {
+     "name": "Chikamin Tie ORV Trailhead",
+     "lat": 47.98051,
+     "lon": -120.70201,
+     "src": "usfs",
+     "srcId": 58701,
+     "road": "Chikamin Tie #1561 to the Upper Mad River area.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58701"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ],
+    [
+     "Alder Ridge trail",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/recreation/trails/alder-ridge-orv-trail"
+    ]
+   ]
+  },
+  {
+   "id": "stemilt",
+   "name": "Stemilt / Colockum Green Dot Roads (Clear Lake)",
+   "area": "Stemilt Loop Rd, south of Wenatchee",
+   "lat": 47.30248,
+   "lon": -120.28733,
+   "season": [
+    4,
+    16,
+    11,
+    30
+   ],
+   "seasonNote": "Seasonal green-dot roads close Mar 1 – Apr 15. In winter these lots are Sno-Parks for snowmobiles (Sno-Park permit required)",
+   "diff": 2,
+   "rating": null,
+   "trails": "Green-dot roads: Lilly Lake Rd, Upper Basin Loop, Orr Creek Rd, Jumpoff Rd, Pole Flat Rd, Ingersoll Rd, Naneum Ridge Rd and more",
+   "trailNos": [],
+   "keywords": [
+    "Stemilt",
+    "Colockum",
+    "Clear Lake",
+    "Lily Lake",
+    "Lilly Lake"
+   ],
+   "notes": "Dirt roads, not single track. Ride only roads with green-dot markers (green on the map). Stemilt Loop Rd, Upper Wheeler Rd and parts of Colockum Rd are street-legal only (gray-blue on the map), so a non-plated bike can't ride them.",
+   "pass": "Discover Pass + ORV tag (Sno-Park permit in winter)",
+   "parking": [
+    {
+     "name": "Clear Lake Sno-Park",
+     "lat": 47.30248,
+     "lon": -120.28733,
+     "src": "parks",
+     "srcNote": "Official WA State Parks location",
+     "road": "Malaga Hwy south of Wenatchee, right on Stemilt Creek Rd, right on Stemilt Loop Rd for 3 miles to Clear Lake Rd. 125 spaces.",
+     "url": "https://parks.wa.gov/find-sno-parks/clear-lake-sno-park"
+    },
+    {
+     "name": "Lily Lake Sno-Park",
+     "lat": 47.30204,
+     "lon": -120.31508,
+     "src": "parks",
+     "srcNote": "Official WA State Parks location",
+     "road": "Stemilt Loop Rd for 4.5 miles to Lily Lake Rd; lot entrance about 200 ft east of the junction on the left. 40 spaces.",
+     "url": "https://parks.wa.gov/node/735"
+    }
+   ],
+   "links": [
+    [
+     "Green dot map (PDF)",
+     "https://dnr.wa.gov/geo/naneumcolockum.pdf"
+    ],
+    [
+     "WDFW green dot info",
+     "https://wdfw.wa.gov/about/wdfw-lands/green-dot"
+    ]
+   ]
+  },
+  {
+   "id": "naneum",
+   "name": "Naneum Ridge State Forest",
+   "area": "South of Wenatchee via Colockum / Naneum",
+   "lat": 47.18,
+   "lon": -120.38,
+   "season": null,
+   "seasonNote": "Some green-dot roads close Mar 1 – Apr 15. Snow trails groomed for sleds Dec 15 – Apr 1",
+   "diff": 2,
+   "rating": null,
+   "techSrc": "onX tech rating 3 (easy)",
+   "trails": "109 miles of green-dot roads (dirt roads, not single track)",
+   "trailNos": [],
+   "keywords": [
+    "Naneum",
+    "Colockum",
+    "Stemilt",
+    "Coleman",
+    "Cooke Canyon"
+   ],
+   "notes": "Ride only roads with green-dot markers (green on the map). Some roads are street-legal only (gray-blue on the map). Active logging in the Coleman and Stemilt areas through Oct 2026.",
+   "pass": "Discover Pass + ORV tag",
+   "parking": [],
+   "noParking": "DNR doesn't list a motorized trailhead here. People use pullouts along green-dot roads. Use the DNR green dot map to plan.",
+   "links": [
+    [
+     "DNR page & alerts",
+     "https://dnr.wa.gov/forest-and-trust-lands/naneum-ridge-state-forest"
+    ],
+    [
+     "Green dot map (PDF)",
+     "https://dnr.wa.gov/geo/naneumcolockum.pdf"
+    ]
+   ]
+  },
+  {
+   "id": "taneum",
+   "name": "Taneum / Manastash Trails",
+   "area": "West of Ellensburg",
+   "lat": 47.09514,
+   "lon": -120.98704,
+   "season": [
+    6,
+    15,
+    11,
+    15
+   ],
+   "seasonNote": "Spring closure until about June 15; snow late fall",
+   "diff": 3,
+   "rating": null,
+   "trails": "South Fork Taneum #1367, North Fork Taneum #1377, Manastash Ridge #1388, Taneum Ridge #1363",
+   "trailNos": [
+    "1367",
+    "1377",
+    "1388",
+    "1363"
+   ],
+   "keywords": [
+    "Taneum",
+    "Manastash",
+    "1367",
+    "1377",
+    "1388",
+    "1363"
+   ],
+   "notes": "Large motorcycle trail network. Icewater Creek Campground has a beginner motorcycle loop (campground is closed for the season now).",
+   "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag. Discover Pass is not valid here.",
+   "parking": [
+    {
+     "name": "South Fork Meadow Trailhead",
+     "lat": 47.09514,
+     "lon": -120.98704,
+     "src": "usfs",
+     "srcId": 57811,
+     "road": "South Fork Taneum #1367.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=57811"
+    },
+    {
+     "name": "Manastash Trailhead",
+     "lat": 47.02489,
+     "lon": -120.93795,
+     "src": "usfs",
+     "srcId": 57655,
+     "road": "Manastash Ridge #1388. Fee tubes at Manastash Camp.",
+     "fee": "$5/vehicle/day",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=57655"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ]
+   ]
+  },
+  {
+   "id": "little-naches",
+   "name": "Little Naches OHV Area",
+   "area": "Off Hwy 410, west of Naches",
+   "lat": 47.02738,
+   "lon": -121.15316,
+   "season": [
+    6,
+    15,
+    10,
+    31
+   ],
+   "seasonNote": "Spring closure until about June 15; campgrounds close in fall",
+   "diff": 3,
+   "rating": null,
+   "trails": "Single track leaving right from the campgrounds",
+   "trailNos": [],
+   "keywords": [
+    "Little Naches",
+    "Kaner Flat",
+    "Crow Creek",
+    "Longmire"
+   ],
+   "notes": "Popular motorcycle area with OHV staging and campgrounds next to the trails. Farther drive (about 2.5 hours).",
+   "pass": "Staging fee or Northwest Forest Pass, plus ORV tag",
+   "parking": [
+    {
+     "name": "Longmire Meadow OHV staging",
+     "lat": 47.02738,
+     "lon": -121.15316,
+     "src": "usfs",
+     "srcId": 58361,
+     "road": "OHV staging area with vault toilet.",
+     "fee": "$8 per vehicle per day",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58361"
+    },
+    {
+     "name": "Kaner Flat Campground",
+     "lat": 47.01101,
+     "lon": -121.13001,
+     "src": "usfs",
+     "srcId": 58311,
+     "road": "Campground with RV loop.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58311"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ]
+   ]
+  },
+  {
+   "id": "moses-dunes",
+   "name": "Moses Lake Sand Dunes",
+   "area": "Grant County ORV area, south of Moses Lake",
+   "lat": 47.0632,
+   "lon": -119.3204,
+   "season": null,
+   "seasonNote": "Open year-round",
+   "diff": 2,
+   "rating": null,
+   "trails": "About 3,000 acres of open dunes",
+   "trailNos": [],
+   "keywords": [
+    "Moses Lake Sand Dunes"
+   ],
+   "notes": "Best winter option. No alcohol allowed. A paddle tire helps. Don't ride on county or canal roads.",
+   "pass": "ORV tag",
+   "parking": [
+    {
+     "name": "Dune entrance, Sand Dune Rd",
+     "lat": 47.0706,
+     "lon": -119.2798,
+     "src": "multi",
+     "srcNote": "3 separate sources agree within 50 m (Timber Tamers club, Campendium, Overland Bound)",
+     "road": "Park along the gravel road. Parking is on sand, so watch for soft spots. 2026: the Hansen Rd overpass at I-90 Exit 174 is closed; use Exit 169 if coming from the east."
+    }
+   ],
+   "links": [
+    [
+     "Rider reports",
+     "https://riderplanet-usa.com/atv/trails/info/washington_05789/ride_42fc.htm"
+    ]
+   ]
+  },
+  {
+   "id": "beverly",
+   "name": "Beverly Dunes ORV Area",
+   "area": "Lower Crab Creek Rd, near Beverly",
+   "lat": 46.83032,
+   "lon": -119.89313,
+   "season": null,
+   "seasonNote": "Open year-round",
+   "diff": 2,
+   "rating": null,
+   "trails": "About 300 acres of sandy trails and bowls",
+   "trailNos": [],
+   "keywords": [
+    "Beverly"
+   ],
+   "notes": "Smaller and quieter than Moses Lake. Good for all ages.",
+   "pass": "Discover Pass + ORV tag",
+   "parking": [
+    {
+     "name": "Beverly Dunes ORV Area (DNR)",
+     "lat": 46.83032,
+     "lon": -119.89313,
+     "src": "dnr",
+     "srcId": "Beverly Dunes ORV Area",
+     "road": "Off Lower Crab Creek Rd, about 2 miles east of the Hwy 243 turn. Staging area is on the south side."
+    }
+   ],
+   "links": [
+    [
+     "DNR recreation map",
+     "https://dnr.wa.gov/recreation/where-go-what-do"
+    ]
+   ]
+  }
+ ]
 }

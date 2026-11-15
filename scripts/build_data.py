@@ -155,6 +155,35 @@ fs_nos = {f["properties"]["no"] for f in fs_feats}
 osm_keep = [f for f in osm_feats if f["properties"].get("no") not in fs_nos]
 confirmed = fs_feats + osm_keep
 
+# ---------------- 2a. DNR / WDFW green-dot roads ----------------
+# 10 green-dot road, 20 green-dot jeep trail, 22 seasonal green-dot road = open to ORVs.
+# 30 road management area access road = street-legal vehicles only. 21 other jeep trail = not green dot (skipped).
+street_only = []
+try:
+    GD = "https://services.arcgis.com/4x406oNViizbGo13/arcgis/rest/services/Adding_GreenDotRoads/FeatureServer/0/query"
+    off, gd = 0, 0
+    while True:
+        j = get(GD, {"where": "GREENDOT_STATUS IN (10,20,22,30)", "outFields": "ROAD_NM,GREENDOT_STATUS,SEASONAL",
+                     "returnGeometry": "true", "outSR": "4326", "geometryPrecision": "5", "resultOffset": off,
+                     "resultRecordCount": 1000, "f": "json"}, timeout=120)
+        feats = j.get("features", [])
+        for f in feats:
+            a = f["attributes"]; st = a.get("GREENDOT_STATUS")
+            for path in (f.get("geometry") or {}).get("paths", []):
+                if len(path) < 2: continue
+                feat = {"type": "Feature", "geometry": {"type": "LineString", "coordinates": thin([[round(x, 5), round(y, 5)] for x, y in path])},
+                        "properties": {k: v for k, v in {"src": "greendot", "name": a.get("ROAD_NM"), "gd": st,
+                                       "seasonal": 1 if (st == 22 or a.get("SEASONAL") == 1) else None, "hw": "track"}.items() if v is not None}}
+                if st == 30:
+                    feat["properties"]["street"] = 1; street_only.append(feat)
+                else:
+                    confirmed.append(feat); gd += 1
+        if not j.get("exceededTransferLimit") and len(feats) < 1000: break
+        off += len(feats)
+    data["sources"]["greendot"] = f"ok, {gd} ORV segments, {len(street_only)} street-legal-only"
+except Exception as e:
+    data["sources"]["greendot"] = f"failed: {e}"
+
 # Tag each confirmed trail with the spots it belongs to (trail number listed for the spot, or within 8 km of its parking)
 def spot_points(s):
     return [(p["lon"], p["lat"]) for p in s.get("parking", [])] or [(s["lon"], s["lat"])]
@@ -199,11 +228,15 @@ try:
                  "moto": t.get("motorcycle"), "access": t.get("access"), "old": t.get("old_name")}
         ctx.append({"type": "Feature", "geometry": {"type": "LineString", "coordinates": thin([[round(p["lon"], 5), round(p["lat"], 5)] for p in g], 15)},
                     "properties": {k: v for k, v in props.items() if v}})
-    json.dump({"type": "FeatureCollection", "updated": today.isoformat(), "features": ctx},
-              open("branches.geojson", "w"), separators=(",", ":"))
     data["sources"]["branches"] = f"ok, {len(ctx)} segments"
 except Exception as e:
     data["sources"]["branches"] = f"failed, kept last copy: {e}"
+    try:
+        ctx = [f for f in json.load(open("branches.geojson"))["features"] if not f["properties"].get("street")]
+    except Exception:
+        ctx = []
+json.dump({"type": "FeatureCollection", "updated": today.isoformat(), "features": ctx + street_only},
+          open("branches.geojson", "w"), separators=(",", ":"))
 
 
 
@@ -246,6 +279,8 @@ for s in spots:
                         signal(s["id"], "warn", f"The {agency} moved its location for {p['name']} by {round(moved)} m. Directions now use the new location.", p.get("url"), "parking check")
                     if off["status"] == "closed":
                         signal(s["id"], "closed", f"{p['name']} is marked closed by the {agency}.", p.get("url"), "official site status")
+            elif p["src"] == "parks":
+                rec["check"] = "official"
             else:
                 rec["check"] = "multi-source"
         except Exception as e:
