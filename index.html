@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E-Moto Ride Finder</title>
+<meta name="theme-color" content="#1d2a1f">
+<style>
+  :root{
+    --bg:#f4f1ea; --card:#fffdf8; --ink:#1d2a1f; --muted:#6b7166; --line:#e2ddd2;
+    --open:#2e7d4f; --closed:#b23a2e; --warn:#b7791f; --accent:#1d2a1f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  header{background:var(--accent);color:#fff;padding:16px 16px 12px;position:sticky;top:0;z-index:5}
+  header h1{margin:0;font-size:20px;letter-spacing:.2px}
+  header .sub{font-size:13px;opacity:.8;margin-top:2px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  select,button,label.chk{font:inherit;font-size:14px;border-radius:8px;border:1px solid #ffffff40;background:#ffffff18;color:#fff;padding:7px 10px}
+  select option{color:#000}
+  button{cursor:pointer}
+  button:active{transform:scale(.98)}
+  label.chk{display:flex;align-items:center;gap:6px}
+  main{max-width:760px;margin:0 auto;padding:12px}
+  .note{font-size:13px;color:var(--muted);margin:4px 2px 10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .name{font-weight:650;font-size:16px}
+  .area{font-size:13px;color:var(--muted)}
+  .dist{font-weight:650;white-space:nowrap;text-align:right}
+  .dist small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+  .pills{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+  .pill{font-size:12.5px;border-radius:999px;padding:3px 9px;border:1px solid var(--line);background:#fff}
+  .pill.open{background:#e6f3eb;border-color:#b9dcc6;color:var(--open)}
+  .pill.closed{background:#f8e6e3;border-color:#e8c1bb;color:var(--closed)}
+  .pill.warn{background:#fbf1de;border-color:#ecd4a6;color:var(--warn)}
+  .why{font-size:13.5px;margin-top:4px}
+  details{margin-top:6px}
+  summary{cursor:pointer;font-size:13.5px;color:var(--muted)}
+  .more{font-size:13.5px;margin-top:6px}
+  .more p{margin:4px 0}
+  .links a{display:inline-block;margin:4px 10px 0 0;color:var(--ink)}
+  .stars{display:inline-flex;gap:2px;vertical-align:middle}
+  .stars button{background:none;border:none;color:#c9b27a;font-size:20px;padding:0 1px;line-height:1}
+  .pbtn{background:#2f5fb3;color:#fff;border:none;border-radius:6px;font-weight:800;font-size:14px;width:26px;height:26px;margin-left:6px;vertical-align:middle;cursor:pointer}
+  .park{display:none;margin-top:8px;padding:10px;border-radius:10px;background:#eef3fb;border:1px solid #cfdcf3;font-size:13.5px}
+  .park.show{display:block}
+  .park a{display:inline-block;margin:6px 8px 0 0;background:#2f5fb3;color:#fff;text-decoration:none;padding:6px 11px;border-radius:8px;font-size:14px}
+  .go{display:inline-block;margin-top:8px;background:var(--accent);color:#fff;text-decoration:none;padding:7px 12px;border-radius:8px;font-size:14px}
+  h2{font-size:15px;margin:18px 2px 8px}
+  .osm li{margin:4px 0;font-size:14px}
+  .rules{font-size:13.5px}
+  .rules li{margin:4px 0}
+  footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
+</style>
+</head>
+<body>
+<header>
+  <h1>E-Moto Ride Finder</h1>
+  <div class="sub" id="where">Finding your location…</div>
+  <div class="bar">
+    <select id="sort" aria-label="Sort by">
+      <option value="dist">Closest first</option>
+      <option value="open">Open first</option>
+      <option value="cond">Best conditions</option>
+      <option value="rating">Highest rated</option>
+      <option value="easy">Easiest first</option>
+      <option value="hard">Hardest first</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="openOnly"> Open only</label>
+    <button id="refresh">↻ Refresh</button>
+  </div>
+</header>
+
+<main>
+  <div class="note" id="updated">Loading status and weather…</div>
+  <div id="list"></div>
+
+  <h2>More trails near you (OpenStreetMap)</h2>
+  <div class="note">Trails that volunteers have tagged as open to motorcycles. Good for finding new spots, but always check the signs at the trailhead.</div>
+  <button id="osmBtn" class="go" style="border:none">Search within 25 miles</button>
+  <ul class="osm" id="osm"></ul>
+
+  <h2>Before you ride</h2>
+  <ul class="rules">
+    <li>In Washington, Sur-Rons and Talarias count as off-road motorcycles, not e-bikes. They need a WA ORV tag from the Department of Licensing.</li>
+    <li>Only ride trails and roads marked open to motorcycles. Mountain bike and hiking trails are off limits.</li>
+    <li>Forest Service trailheads need a Northwest Forest Pass. DNR land (Naneum Ridge, Beverly Dunes) needs a Discover Pass.</li>
+    <li>Not street legal: you can't ride on paved county roads to get to a trailhead.</li>
+  </ul>
+</main>
+<footer>Weather: Open-Meteo · Extra trails: © OpenStreetMap contributors · Status can change fast. Check the official link before you drive.</footer>
+
+<script>
+// ---------- Riding spots ----------
+// lat/lon are approximate and used only for distance. Directions use the place name.
+// season: [startMonth, startDay, endMonth, endDay] = normal open window. null = year-round.
+// diff: 1 (easy) to 5 (expert). rating: outside review score out of 5, or null if none found.
+const SPOTS = [
+  {id:"devils-gulch", park:"Devils Gulch staging area on Mission Creek Rd, about 10 miles south of Cashmere.", name:"Devils Gulch Trailhead", area:"Mission Creek Rd, south of Cashmere · 35 mi of single track",
+   lat:47.410, lon:-120.468, nav:"Devils Gulch Trailhead, Mission Creek Rd, Cashmere, WA",
+   season:null, diff:3, rating:4, ratingSrc:"Singletracks (Red Hill #1223)",
+   trails:"Devils Gulch #1220, Red Devil #1221, Red Hill #1223, Mission Ridge #1201",
+   notes:"The closest real motorcycle trail system to Wenatchee. Upper Red Hill closes Oct 15 – Jun 15 for elk calving; the rest stays open but gets snow up high in winter.",
+   pass:"Northwest Forest Pass + ORV tag",
+   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Trail map (PDF)","https://www.fs.usda.gov/media/232877"],["Rider reports","https://www.riderplanet-usa.com/atv/trails/info/washington_04668/ride_30c5.htm"]]},
+
+  {id:"beehive", park:"Beehive Reservoir staging area off Liberty-Beehive Rd.", name:"Beehive Reservoir Staging", area:"Upper Mission Creek / Liberty-Beehive Rd",
+   lat:47.333, lon:-120.443, nav:"Beehive Reservoir, Wenatchee, WA",
+   season:[6,1,10,31], seasonNote:"Snow usually blocks the road Nov – May",
+   diff:2, rating:null, ratingSrc:null,
+   trails:"Beehive #1202 (beginner), Mission Ridge #1201 (advanced), Devils Spur #1203",
+   notes:"Higher-elevation start for the same system. Beehive #1202 is short and easy; Mission Ridge #1201 is rated advanced.",
+   pass:"Northwest Forest Pass + ORV tag",
+   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Trail map (PDF)","https://www.fs.usda.gov/media/232877"]]},
+
+  {id:"tronsen", park:"Upper Tronsen Ridge OHV Trailhead. No parking fee here.", name:"Upper Tronsen Ridge OHV Trailhead", area:"Near Blewett Pass, Hwy 97",
+   lat:47.355, lon:-120.560, nav:"Upper Tronsen Ridge OHV Trailhead, WA",
+   season:[6,16,10,14], seasonNote:"Closed Oct 15 – Jun 15 for elk calving",
+   diff:4, rating:null, ratingSrc:null,
+   trails:"Tronsen Ridge #1204, Tronsen Meadow #1205",
+   notes:"Ridge riding with big views. No parking fee at this trailhead.",
+   pass:"ORV tag",
+   links:[["Trailhead page","https://fs.usda.gov/r06/okanogan-wenatchee/recreation/upper-tronsen-ridge-ohv-trailhead"],["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]},
+
+  {id:"mad-river", park:"Maverick Saddle staging area. Lots of room for trailers.", name:"Mad River / Maverick Saddle", area:"Entiat Mountains, above Plain and Ardenvoir",
+   lat:47.836, lon:-120.553, nav:"Maverick Saddle, Leavenworth, WA",
+   season:[7,1,10,31], seasonNote:"Usually under snow Nov – June. Blue Creek, Upper Mad River and Alder Ridge open only when posted",
+   diff:3, rating:null, ratingSrc:null,
+   trails:"Mad River #1409, Devils Backbone, Alder Ridge #1523, Lower Chiwawa",
+   notes:"Big network of single track maintained mainly for motorcycles and mountain bikes. Call the ranger district in early summer to see what's posted open.",
+   pass:"Northwest Forest Pass + ORV tag",
+   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Alder Ridge trail","https://www.fs.usda.gov/r06/okanogan-wenatchee/recreation/trails/alder-ridge-orv-trail"],["Rider reports","https://www.riderplanet-usa.com/atv/trails/info/washington_04664/ride_14c9.htm"]]},
+
+  {id:"entiat-ridge", park:"Entiat Ridge trailhead. Call the Chelan Ranger District (509-682-4900) to make sure the road is open.", name:"Entiat Ridge / Chelan Mountains", area:"Between the Entiat valley and Lake Chelan",
+   lat:47.930, lon:-120.330, nav:"Entiat Ridge Trail, Chelan, WA",
+   season:[7,1,10,31], seasonNote:"High country; usually snowed in Nov – June",
+   diff:2, rating:null, ratingSrc:null, techSrc:"onX tech rating 2 (easy)",
+   trails:"Entiat Ridge (13.5 mi), Four Mile Ridge #1445, Devils Backbone #1448",
+   notes:"Easier ridge route with views of both valleys. Some side trails close seasonally; check with the Chelan Ranger District (509-682-4900).",
+   pass:"Northwest Forest Pass + ORV tag",
+   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["onX trail list","https://www.onxmaps.com/offroad/dirt-bike-trails-near-me/entiat-wa"]]},
+
+  {id:"naneum", park:"There's no main lot. Park at a pullout along a green-dot road.", name:"Naneum Ridge State Forest", area:"South of Wenatchee via Colockum / Naneum",
+   lat:47.280, lon:-120.220, nav:"Naneum Ridge State Forest, WA",
+   season:null, seasonNote:"Open year-round. Snow trails are groomed for sleds Dec 15 – Apr 1",
+   diff:2, rating:null, ratingSrc:null, techSrc:"onX tech rating 3 (easy)",
+   trails:"109 miles of green-dot roads",
+   notes:"Mostly dirt roads, not single track. Ride only roads with a green dot sign, and check that the sign allows ORVs.",
+   pass:"Discover Pass + ORV tag",
+   links:[["DNR page & alerts","https://dnr.wa.gov/node/449"],["onX trail list","https://www.onxmaps.com/offroad/dirt-bike-trails-near-me/west-wenatchee-wa"]]},
+
+  {id:"taneum", park:"Pullouts and staging along Taneum Creek Rd.", name:"Taneum / Manastash Trails", area:"West of Ellensburg",
+   lat:47.080, lon:-120.900, nav:"Taneum Creek Rd, Thorp, WA",
+   season:[6,15,11,15], seasonNote:"Spring closure until about June 15; snow late fall",
+   diff:3, rating:null, ratingSrc:null,
+   trails:"Taneum, Manastash Ridge, Naneum Meadows #1389",
+   notes:"Large motorcycle trail network. Closure dates move with the weather each spring.",
+   pass:"Northwest Forest Pass + ORV tag",
+   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]},
+
+  {id:"moses-dunes", park:"Main parking along Sand Dune Rd at the dunes entrance.", name:"Moses Lake Sand Dunes", area:"Grant County ORV area, south of Moses Lake",
+   lat:47.063, lon:-119.320, nav:"Moses Lake Sand Dunes, Moses Lake, WA",
+   season:null, seasonNote:"Open year-round",
+   diff:2, rating:null, ratingSrc:null,
+   trails:"About 3,000 acres of open dunes",
+   notes:"Your best winter option. No alcohol allowed. A paddle tire helps in deep sand. Don't ride on county roads or canal roads.",
+   pass:"ORV tag",
+   links:[["Rider reports","https://riderplanet-usa.com/atv/trails/info/washington_05789/ride_42fc.htm"]]},
+
+  {id:"beverly", park:"Beverly Dunes ORV Park lot, 1.8 miles in on the access road.", name:"Beverly Dunes ORV Park", area:"Lower Crab Creek, near Beverly",
+   lat:46.860, lon:-119.900, nav:"Beverly Dunes ORV Park, Beverly, WA",
+   season:null, seasonNote:"Open year-round",
+   diff:2, rating:null, ratingSrc:null,
+   trails:"Open sand dunes",
+   notes:"Smaller and quieter than Moses Lake. Good for all ages.",
+   pass:"Discover Pass + ORV tag",
+   links:[["DNR page & alerts","https://dnr.wa.gov/node/449"]]}
+];
+
+const HOME = {lat:47.4235, lon:-120.3103, label:"Wenatchee (default)"};
+const COND_RANK = {"Dry":5,"Damp – good traction":5,"Dry, dusty":4,"Muddy":2,"Patchy snow":2,"Snow on ground":1,"Unknown":3};
+const DIFF_WORDS = ["","Easy","Easy–moderate","Moderate","Hard","Expert"];
+
+let me = null, weather = {}, overrides = {}, statusDate = null;
+const $ = s => document.querySelector(s);
+
+// ---------- Helpers ----------
+function miles(a,b){
+  const R=3958.8, toR=x=>x*Math.PI/180;
+  const dLat=toR(b.lat-a.lat), dLon=toR(b.lon-a.lon);
+  const h=Math.sin(dLat/2)**2+Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function inSeason(s, d=new Date()){
+  if(!s) return true;
+  const v=(d.getMonth()+1)*100+d.getDate(), a=s[0]*100+s[1], b=s[2]*100+s[3];
+  return a<=b ? (v>=a && v<=b) : (v>=a || v<=b);
+}
+function myRating(id){ try{ return +localStorage.getItem("rate-"+id)||0 }catch(e){ return 0 } }
+function setMyRating(id,n){ try{ localStorage.setItem("rate-"+id,n) }catch(e){} render(); }
+
+function statusOf(s){
+  const o = overrides[s.id];
+  if(o && o.status) return {key:o.status, text:o.status==="open"?"Open":o.status==="closed"?"Closed":"Check first", note:o.note||"", src:"Posted update"};
+  if(!inSeason(s.season)) return {key:"closed", text:"Seasonal closure", note:s.seasonNote||"", src:"Normal season dates"};
+  const w = weather[s.id];
+  if(w && w.cond==="Snow on ground") return {key:"warn", text:"Open, but snowy", note:"", src:"Weather"};
+  return {key:"open", text:"Open", note:s.seasonNote||"", src:"Normal season dates"};
+}
+function statusRank(st){ return st.key==="open"?0:st.key==="warn"?1:2; }
+
+// ---------- Weather-based trail condition ----------
+async function loadWeather(){
+  const lats=SPOTS.map(s=>s.lat).join(","), lons=SPOTS.map(s=>s.lon).join(",");
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}`+
+    `&daily=precipitation_sum,snowfall_sum,temperature_2m_max&hourly=snow_depth`+
+    `&past_days=3&forecast_days=2&timezone=America%2FLos_Angeles&precipitation_unit=inch&temperature_unit=fahrenheit`;
+  try{
+    const r=await fetch(url); const j=await r.json();
+    const arr=Array.isArray(j)?j:[j];
+    const hr=72+new Date().getHours();
+    arr.forEach((d,i)=>{
+      const p=d.daily.precipitation_sum, sn=d.daily.snowfall_sum, t=d.daily.temperature_2m_max;
+      const rain2=(p[2]||0)+(p[3]||0), snow3=(sn[0]||0)+(sn[1]||0)+(sn[2]||0)+(sn[3]||0);
+      const depthM=(d.hourly.snow_depth[hr]??0), depthIn=depthM*39.37;
+      let cond;
+      if(depthIn>=4) cond="Snow on ground";
+      else if(depthIn>=1 || snow3>=1) cond="Patchy snow";
+      else if(rain2>=0.4) cond="Muddy";
+      else if(rain2>=0.1) cond="Damp – good traction";
+      else if((t[3]||0)>=85) cond="Dry, dusty";
+      else cond="Dry";
+      weather[SPOTS[i].id]={cond, rain2, depthIn, hi:Math.round(t[3]), tomorrowRain:p[4]||0, tomorrowHi:Math.round(t[4])};
+    });
+  }catch(e){ console.log("weather failed",e); }
+}
+
+// ---------- Posted status updates (status.json in this repo) ----------
+async function loadOverrides(){
+  try{
+    const r=await fetch("status.json?ts="+Date.now(),{cache:"no-store"});
+    if(!r.ok) return;
+    const j=await r.json(); overrides=j.spots||{}; statusDate=j.updated||null;
+  }catch(e){}
+}
+
+// ---------- Render ----------
+function render(){
+  const here = me || HOME;
+  let rows = SPOTS.map(s=>{
+    const st=statusOf(s), w=weather[s.id];
+    return {s, st, w, d:miles(here,s), cond:w?w.cond:"Unknown", r:myRating(s.id)||s.rating||0};
+  });
+  if($("#openOnly").checked) rows=rows.filter(x=>x.st.key!=="closed");
+  const by=$("#sort").value;
+  const sorters={
+    dist:(a,b)=>a.d-b.d,
+    open:(a,b)=>statusRank(a.st)-statusRank(b.st)||a.d-b.d,
+    cond:(a,b)=>statusRank(a.st)-statusRank(b.st)||COND_RANK[b.cond]-COND_RANK[a.cond]||a.d-b.d,
+    rating:(a,b)=>b.r-a.r||a.d-b.d,
+    easy:(a,b)=>a.s.diff-b.s.diff||a.d-b.d,
+    hard:(a,b)=>b.s.diff-a.s.diff||a.d-b.d
+  };
+  rows.sort(sorters[by]);
+
+  $("#list").innerHTML = rows.length ? rows.map(({s,st,w,d,cond})=>{
+    const condCls = /Snow|Muddy/.test(cond)?"warn":"";
+    const mine=myRating(s.id);
+    const ratingText = s.rating ? `${s.rating}/5 (${s.ratingSrc})` : (s.techSrc||"No outside rating found yet");
+    const stars=[1,2,3,4,5].map(n=>`<button aria-label="${n} stars" onclick="setMyRating('${s.id}',${n})">${n<=mine?"★":"☆"}</button>`).join("");
+    const wx = w ? `High ${w.hi}°F today · ${w.rain2.toFixed(2)}" rain last 2 days${w.depthIn>=0.5?` · ${w.depthIn.toFixed(0)}" snow`:""} · Tomorrow ${w.tomorrowHi}°F${w.tomorrowRain>=0.05?`, ${w.tomorrowRain.toFixed(2)}" rain`:""}` : "Weather not loaded";
+    return `<div class="card">
+      <div class="top">
+        <div><div class="name">${s.name}<button class="pbtn" title="Parking" aria-label="Where to park" onclick="togglePark('${s.id}')">P</button></div><div class="area">${s.area}</div></div>
+        <div class="dist">${d.toFixed(0)} mi<small>straight line</small></div>
+      </div>
+      <div class="pills">
+        <span class="pill ${st.key}">${st.text}</span>
+        <span class="pill ${condCls}">${cond}</span>
+        <span class="pill">${DIFF_WORDS[s.diff]}</span>
+        ${mine?`<span class="pill">You: ${mine}★</span>`:(s.rating?`<span class="pill">${s.rating}★</span>`:"")}
+      </div>
+      ${st.note?`<div class="why">${st.note}</div>`:""}
+      <details><summary>Details</summary><div class="more">
+        <p><b>Trails:</b> ${s.trails}</p>
+        <p>${s.notes}</p>
+        <p><b>You need:</b> ${s.pass}</p>
+        <p><b>Weather:</b> ${wx}</p>
+        <p><b>Rating:</b> ${ratingText}</p>
+        <p><b>Your rating:</b> <span class="stars">${stars}</span></p>
+        <p style="color:var(--muted);font-size:12.5px">Status from: ${st.src}</p>
+        <div class="links">${s.links.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("")}</div>
+      </div></details>
+      <div class="park" id="park-${s.id}">
+        <b>Where to park:</b> ${s.park}
+        <div><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.nav)}" target="_blank" rel="noopener">Google Maps</a><a href="https://maps.apple.com/?daddr=${encodeURIComponent(s.nav)}&dirflg=d" target="_blank" rel="noopener">Apple Maps</a></div>
+      </div>
+    </div>`;
+  }).join("") : `<div class="card">Nothing open right now with these filters. Uncheck "Open only" to see everything.</div>`;
+
+  const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+  $("#updated").textContent = `Updated ${t}. Conditions are estimated from recent rain, snow and temperature.` + (statusDate?` Posted status as of ${statusDate}.`:"");
+}
+
+function togglePark(id){ const el=document.getElementById("park-"+id); if(el) el.classList.toggle("show"); }
+
+// ---------- Location ----------
+function locate(){
+  return new Promise(res=>{
+    if(!navigator.geolocation){ $("#where").textContent="Distances from "+HOME.label; return res(); }
+    navigator.geolocation.getCurrentPosition(p=>{
+      me={lat:p.coords.latitude, lon:p.coords.longitude};
+      $("#where").textContent="Distances from your current location"; res();
+    },()=>{ $("#where").textContent="Location off – distances from "+HOME.label; res(); },
+    {enableHighAccuracy:false, timeout:8000, maximumAge:600000});
+  });
+}
+
+// ---------- OpenStreetMap extra trails ----------
+async function osmSearch(){
+  const here=me||HOME, box=$("#osm");
+  box.innerHTML="<li>Searching…</li>";
+  const q=`[out:json][timeout:25];(way["highway"~"path|track|bridleway"]["motorcycle"~"yes|designated|permissive"](around:40000,${here.lat},${here.lon}););out tags center 200;`;
+  try{
+    const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+encodeURIComponent(q)});
+    const j=await r.json();
+    const seen={}; const list=[];
+    j.elements.forEach(e=>{
+      const n=e.tags.name||e.tags.ref; if(!n||seen[n]) return; seen[n]=1;
+      list.push({n, d:miles(here,{lat:e.center.lat,lon:e.center.lon}), id:e.id, lat:e.center.lat, lon:e.center.lon});
+    });
+    list.sort((a,b)=>a.d-b.d);
+    box.innerHTML = list.length ? list.slice(0,40).map(x=>
+      `<li><b>${x.n}</b> · ${x.d.toFixed(0)} mi · <a href="https://www.openstreetmap.org/way/${x.id}" target="_blank" rel="noopener">map ↗</a></li>`).join("")
+      : "<li>No tagged motorcycle trails found within 25 miles.</li>";
+  }catch(e){ box.innerHTML="<li>Couldn't reach OpenStreetMap. Try again in a minute.</li>"; }
+}
+
+// ---------- Start ----------
+async function refreshAll(){
+  $("#refresh").textContent="↻ Loading…";
+  await Promise.all([loadWeather(), loadOverrides()]);
+  render();
+  $("#refresh").textContent="↻ Refresh";
+}
+$("#sort").onchange=render;
+$("#openOnly").onchange=render;
+$("#refresh").onclick=async()=>{ await locate(); await refreshAll(); };
+$("#osmBtn").onclick=osmSearch;
+render();
+locate().then(refreshAll);
+</script>
+</body>
+</html>

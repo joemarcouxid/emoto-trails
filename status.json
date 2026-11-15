@@ -1,0 +1,7 @@
+{
+  "updated": "2026-11-15",
+  "about": "Edit this file on GitHub to post a closure or opening. status can be open, closed, or check. Remove a spot to go back to normal season dates.",
+  "spots": {
+    "tronsen": { "status": "closed", "note": "Seasonal elk calving closure, Oct 15 – Jun 15." }
+  }
+}
