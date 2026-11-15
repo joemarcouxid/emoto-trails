@@ -241,7 +241,21 @@ try:
             hit = next((k for k in s.get("keywords", [])
                         if re.search(rf"(?<![\w.]){re.escape(k)}(?![\w.])", text, re.I)), None)
             if hit:
-                signal(s["id"], "warn", f"Forest Service alert mentions {hit}: {title}", url, "Forest Service alerts")
+                m = re.search(r"Start Date:?\s*([A-Z][a-z]+ \d{1,2}, \d{4})", blurb)
+                if not m:
+                    try:
+                        page = re.sub(r"<[^>]+>|\s+", " ", get(url, as_text=True, timeout=45, tries=2))
+                        m = re.search(r"Start Date:?\s*([A-Z][a-z]+ \d{1,2}, \d{4})", page)
+                    except Exception:
+                        m = None
+                start = None
+                if m:
+                    try: start = dt.datetime.strptime(m.group(1), "%B %d, %Y").date()
+                    except ValueError: start = None
+                if start and (today - start).days > 365:
+                    signal(s["id"], "info", f"Standing rule since {start.year}: {title}", url, "Forest Service alerts")
+                else:
+                    signal(s["id"], "warn", f"Forest Service alert mentions {hit}: {title}" + (f" (since {start:%b %d, %Y})" if start else ""), url, "Forest Service alerts")
     data["sources"]["usfs_alerts"] = f"ok, {len(alerts)} alerts scanned"
 except Exception as e:
     data["sources"]["usfs_alerts"] = f"failed: {e}"
