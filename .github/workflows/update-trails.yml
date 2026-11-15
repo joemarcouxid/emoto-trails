@@ -1,12 +1,12 @@
-name: Update trails
+name: Update trail data
 
 on:
   schedule:
-    - cron: "17 11 * * 1"   # Mondays, early morning Pacific
+    - cron: "17 12 * * *"   # daily, early morning Pacific
   workflow_dispatch:
   push:
     paths:
-      - scripts/fetch_trails.py
+      - scripts/build_data.py
       - .github/workflows/update-trails.yml
 
 permissions:
@@ -20,10 +20,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python scripts/fetch_trails.py
+      - run: python scripts/build_data.py
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add trails.geojson
-          git diff --cached --quiet || (git commit -m "Update trails from OpenStreetMap" && git push)
+          git add trails.geojson data.json
+          git diff --cached --quiet || (git commit -m "Weekly data update" && git push)

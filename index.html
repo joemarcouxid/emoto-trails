@@ -67,6 +67,13 @@
   .p-pin{background:#2f5fb3;color:#fff;font-weight:800;border-radius:6px;border:2px solid #fff;text-align:center;line-height:20px;font-size:13px;box-shadow:0 1px 3px #0006}
   .leaflet-popup-content{font-size:13.5px}
   .leaflet-popup-content a{color:#2f5fb3}
+  .pk{padding:8px 0;border-top:1px solid #cfdcf3}
+  .pk:first-child{border-top:none;padding-top:0}
+  .pk small{color:var(--muted)}
+  .park a.mb{display:inline-block;margin:6px 8px 0 0;background:#2f5fb3;color:#fff;text-decoration:none;padding:6px 11px;border-radius:8px;font-size:14px}
+  .park small a{color:#2f5fb3}
+  .ok{color:var(--open)} .bad{color:var(--closed)}
+  ul.sigs{margin:4px 0 6px 18px;padding:0} ul.sigs li{margin:3px 0} ul.sigs li.closed{color:var(--closed)} ul.sigs li.warn{color:var(--warn)}
   footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
 </style>
 </head>
@@ -93,16 +100,13 @@
   <div class="note" id="updated">Loading status and weather…</div>
   <div id="list"></div>
 
-  <h2>More trails near you (OpenStreetMap)</h2>
-  <div class="note">Trails that volunteers have tagged as open to motorcycles. Good for finding new spots, but always check the signs at the trailhead.</div>
-  <button id="osmBtn" class="go" style="border:none">Search within 25 miles</button>
-  <ul class="osm" id="osm"></ul>
+  <div class="note">More trails: open the <b>Map</b> tab. It shows every trail the Forest Service and OpenStreetMap list as open to motorcycles, plus all verified parking.</div>
 
   <h2>Before you ride</h2>
   <ul class="rules">
     <li>In Washington, Sur-Rons and Talarias count as off-road motorcycles, not e-bikes. They need a WA ORV tag from the Department of Licensing.</li>
     <li>Only ride trails and roads marked open to motorcycles. Mountain bike and hiking trails are off limits.</li>
-    <li>Forest Service trailheads need a Northwest Forest Pass. DNR land (Naneum Ridge, Beverly Dunes) needs a Discover Pass.</li>
+    <li>Forest Service trailheads need a Northwest Forest Pass or the day fee. DNR land (Naneum Ridge, Beverly Dunes) needs a Discover Pass.</li>
     <li>Not street legal: you can't ride on paved county roads to get to a trailhead.</li>
   </ul>
 </main>
@@ -111,111 +115,20 @@
   <div id="mapInfo">Loading trails…</div>
   <button id="locBtn" class="mapbtn" title="Show and follow my location">◎ Me</button>
 </div>
-<footer>Weather: Open-Meteo · Extra trails: © OpenStreetMap contributors · Status can change fast. Check the official link before you drive.</footer>
+<footer>Weather: Open-Meteo · Trails: USDA Forest Service, © OpenStreetMap contributors · Parking: Forest Service, WA DNR · Snow: NRCS SNOTEL · Status can change fast. Check the official link before you drive.</footer>
 
 <script>
-// ---------- Riding spots ----------
-// lat/lon are approximate and used only for distance. Directions use the place name.
-// season: [startMonth, startDay, endMonth, endDay] = normal open window. null = year-round.
-// diff: 1 (easy) to 5 (expert). rating: outside review score out of 5, or null if none found.
-const SPOTS = [
-  {id:"devils-gulch", park:"Devils Gulch staging area on Mission Creek Rd, about 10 miles south of Cashmere.", name:"Devils Gulch Trailhead", area:"Mission Creek Rd, south of Cashmere",
-   lat:47.410, lon:-120.468, nav:"Devils Gulch Trailhead, Mission Creek Rd, Cashmere, WA",
-   season:null, diff:3, rating:4, ratingSrc:"Singletracks (Red Hill #1223)",
-   trails:"Devils Gulch #1220, Red Devil #1221, Red Hill #1223, Mission Ridge #1201",
-   notes:"The closest real motorcycle trail system to Wenatchee. Upper Red Hill closes Oct 15 – Jun 15 for elk calving; the rest stays open but gets snow up high in winter.",
-   pass:"Northwest Forest Pass + ORV tag",
-   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Trail map (PDF)","https://www.fs.usda.gov/media/232877"],["Rider reports","https://www.riderplanet-usa.com/atv/trails/info/washington_04668/ride_30c5.htm"]]},
-
-  {id:"beehive", park:"Beehive Reservoir staging area off Liberty-Beehive Rd.", name:"Beehive Reservoir Staging", area:"Upper Mission Creek / Liberty-Beehive Rd",
-   lat:47.333, lon:-120.443, nav:"Beehive Reservoir, Wenatchee, WA",
-   season:[6,1,10,31], seasonNote:"Snow usually blocks the road Nov – May",
-   diff:2, rating:null, ratingSrc:null,
-   trails:"Beehive #1202 (beginner), Mission Ridge #1201 (advanced), Devils Spur #1203",
-   notes:"Higher-elevation start for the same system. Beehive #1202 is short and easy; Mission Ridge #1201 is rated advanced.",
-   pass:"Northwest Forest Pass + ORV tag",
-   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Trail map (PDF)","https://www.fs.usda.gov/media/232877"]]},
-
-  {id:"mission-ridge", park:"Mission Ridge Trailhead. It's not the ski area lot, so follow the trailhead signs.",
-   name:"Mission Ridge Trailhead", area:"Below Mission Peak, near Mission Ridge ski area",
-   lat:47.3058, lon:-120.4356, nav:"Mission Ridge Trailhead, Wenatchee, WA",
-   season:null, seasonNote:"High elevation. Expect snow in winter.",
-   diff:4, rating:null, ratingSrc:null,
-   trails:"Mission Ridge #1201 (rated advanced), links to Devils Gulch and Beehive",
-   notes:"Closest way onto Mission Ridge #1201 from the Wenatchee side. Mission Peak is right above it.",
-   pass:"Northwest Forest Pass + ORV tag",
-   links:[["Trailhead info","https://www.fs.usda.gov/r06/okanogan-wenatchee/recreation/opportunities/highway-vehicles-ohv?page=%2C2"],["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]},
-
-  {id:"tronsen", park:"Upper Tronsen Ridge OHV Trailhead. No parking fee here.", name:"Upper Tronsen Ridge OHV Trailhead", area:"Near Blewett Pass, Hwy 97",
-   lat:47.355, lon:-120.560, nav:"Upper Tronsen Ridge OHV Trailhead, WA",
-   season:[6,16,10,14], seasonNote:"Closed Oct 15 – Jun 15 for elk calving",
-   diff:4, rating:null, ratingSrc:null,
-   trails:"Tronsen Ridge #1204, Tronsen Meadow #1205",
-   notes:"Ridge riding with big views. No parking fee at this trailhead.",
-   pass:"ORV tag",
-   links:[["Trailhead page","https://fs.usda.gov/r06/okanogan-wenatchee/recreation/upper-tronsen-ridge-ohv-trailhead"],["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]},
-
-  {id:"mad-river", park:"Maverick Saddle staging area. Lots of room for trailers.", name:"Mad River / Maverick Saddle", area:"Entiat Mountains, above Plain and Ardenvoir",
-   lat:47.836, lon:-120.553, nav:"Maverick Saddle, Leavenworth, WA",
-   season:[7,1,10,31], seasonNote:"Usually under snow Nov – June. Blue Creek, Upper Mad River and Alder Ridge open only when posted",
-   diff:3, rating:null, ratingSrc:null,
-   trails:"Mad River #1409, Devils Backbone, Alder Ridge #1523, Lower Chiwawa",
-   notes:"Big network of single track maintained mainly for motorcycles and mountain bikes. Call the ranger district in early summer to see what's posted open.",
-   pass:"Northwest Forest Pass + ORV tag",
-   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Alder Ridge trail","https://www.fs.usda.gov/r06/okanogan-wenatchee/recreation/trails/alder-ridge-orv-trail"],["Rider reports","https://www.riderplanet-usa.com/atv/trails/info/washington_04664/ride_14c9.htm"]]},
-
-  {id:"entiat-ridge", park:"Entiat Ridge trailhead. Call the Chelan Ranger District (509-682-4900) to make sure the road is open.", name:"Entiat Ridge / Chelan Mountains", area:"Between the Entiat valley and Lake Chelan",
-   lat:47.930, lon:-120.330, nav:"Entiat Ridge Trail, Chelan, WA",
-   season:[7,1,10,31], seasonNote:"High country; usually snowed in Nov – June",
-   diff:2, rating:null, ratingSrc:null, techSrc:"onX tech rating 2 (easy)",
-   trails:"Entiat Ridge (13.5 mi), Four Mile Ridge #1445, Devils Backbone #1448",
-   notes:"Easier ridge route with views of both valleys. Some side trails close seasonally; check with the Chelan Ranger District (509-682-4900).",
-   pass:"Northwest Forest Pass + ORV tag",
-   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["onX trail list","https://www.onxmaps.com/offroad/dirt-bike-trails-near-me/entiat-wa"]]},
-
-  {id:"naneum", park:"There's no main lot. Park at a pullout along a green-dot road.", name:"Naneum Ridge State Forest", area:"South of Wenatchee via Colockum / Naneum",
-   lat:47.280, lon:-120.220, nav:"Naneum Ridge State Forest, WA",
-   season:null, seasonNote:"Open year-round. Snow trails are groomed for sleds Dec 15 – Apr 1",
-   diff:2, rating:null, ratingSrc:null, techSrc:"onX tech rating 3 (easy)",
-   trails:"109 miles of green-dot roads",
-   notes:"Mostly dirt roads, not single track. Ride only roads with a green dot sign, and check that the sign allows ORVs.",
-   pass:"Discover Pass + ORV tag",
-   links:[["DNR page & alerts","https://dnr.wa.gov/node/449"],["onX trail list","https://www.onxmaps.com/offroad/dirt-bike-trails-near-me/west-wenatchee-wa"]]},
-
-  {id:"taneum", park:"Pullouts and staging along Taneum Creek Rd.", name:"Taneum / Manastash Trails", area:"West of Ellensburg",
-   lat:47.080, lon:-120.900, nav:"Taneum Creek Rd, Thorp, WA",
-   season:[6,15,11,15], seasonNote:"Spring closure until about June 15; snow late fall",
-   diff:3, rating:null, ratingSrc:null,
-   trails:"Taneum, Manastash Ridge, Naneum Meadows #1389",
-   notes:"Large motorcycle trail network. Closure dates move with the weather each spring.",
-   pass:"Northwest Forest Pass + ORV tag",
-   links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]},
-
-  {id:"moses-dunes", park:"Main parking along Sand Dune Rd at the dunes entrance.", name:"Moses Lake Sand Dunes", area:"Grant County ORV area, south of Moses Lake",
-   lat:47.063, lon:-119.320, nav:"Moses Lake Sand Dunes, Moses Lake, WA",
-   season:null, seasonNote:"Open year-round",
-   diff:2, rating:null, ratingSrc:null,
-   trails:"About 3,000 acres of open dunes",
-   notes:"Your best winter option. No alcohol allowed. A paddle tire helps in deep sand. Don't ride on county roads or canal roads.",
-   pass:"ORV tag",
-   links:[["Rider reports","https://riderplanet-usa.com/atv/trails/info/washington_05789/ride_42fc.htm"]]},
-
-  {id:"beverly", park:"Beverly Dunes ORV Park lot, 1.8 miles in on the access road.", name:"Beverly Dunes ORV Park", area:"Lower Crab Creek, near Beverly",
-   lat:46.860, lon:-119.900, nav:"Beverly Dunes ORV Park, Beverly, WA",
-   season:null, seasonNote:"Open year-round",
-   diff:2, rating:null, ratingSrc:null,
-   trails:"Open sand dunes",
-   notes:"Smaller and quieter than Moses Lake. Good for all ages.",
-   pass:"Discover Pass + ORV tag",
-   links:[["DNR page & alerts","https://dnr.wa.gov/node/449"]]}
-];
-
+// ---------- Data ----------
+// Spots and verified parking live in spots.json. data.json is rebuilt daily by a GitHub Action
+// (parking checks, closure signals, snow sensors). trails.geojson holds the trail lines.
+let SPOTS = [], DATA = {spots:{}}, overrides = {}, statusDate = null;
 const HOME = {lat:47.4235, lon:-120.3103, label:"Wenatchee (default)"};
 const COND_RANK = {"Dry":5,"Damp – good traction":5,"Dry, dusty":4,"Muddy":2,"Patchy snow":2,"Snow on ground":1,"Unknown":3};
 const DIFF_WORDS = ["","Easy","Easy–moderate","Moderate","Hard","Expert"];
-
-let me = null, weather = {}, overrides = {}, statusDate = null;
+const SRC_WORDS = {usfs:"Forest Service official trailhead", dnr:"DNR official site", multi:"Several sources agree"};
+let me = null, weather = {};
 const $ = s => document.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 // ---------- Helpers ----------
 function miles(a,b){
@@ -232,30 +145,58 @@ function inSeason(s, d=new Date()){
 function myRating(id){ try{ return +localStorage.getItem("rate-"+id)||0 }catch(e){ return 0 } }
 function setMyRating(id,n){ try{ localStorage.setItem("rate-"+id,n) }catch(e){} render(); }
 
+// Parking with the official location from today's check (if the agency moved it)
+function parkingOf(s){
+  const checks=(DATA.spots[s.id]||{}).parking||[];
+  return (s.parking||[]).map((p,i)=>{
+    const c=checks[i]||{};
+    const moved=c.check==="moved" && c.lat;
+    return {...p, lat:moved?c.lat:p.lat, lon:moved?c.lon:p.lon, check:c.check||"not checked", siteStatus:c.status};
+  });
+}
+function gLink(p){ return `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`; }
+function aLink(p){ return `https://maps.apple.com/?daddr=${p.lat},${p.lon}&q=${encodeURIComponent(p.name)}&dirflg=d`; }
+
+// Status: signals can only push toward closed / check first. Nothing marks a spot open except normal season dates.
 function statusOf(s){
   const o = overrides[s.id];
-  if(o && o.status) return {key:o.status, text:o.status==="open"?"Open":o.status==="closed"?"Closed":"Check first", note:o.note||"", src:"Posted update"};
+  if(o && o.status) return {key:o.status==="open"?"open":o.status==="closed"?"closed":"warn", text:o.status==="open"?"Open":o.status==="closed"?"Closed":"Check first", note:o.note||"", src:"Your posted update"};
+  const sig=(DATA.spots[s.id]||{}).signals||[];
+  const closed=sig.find(x=>x.level==="closed");
+  if(closed) return {key:"closed", text:"Likely closed", note:closed.text, src:closed.src};
   if(!inSeason(s.season)) return {key:"closed", text:"Seasonal closure", note:s.seasonNote||"", src:"Normal season dates"};
+  const warn=sig.find(x=>x.level==="warn");
+  if(warn) return {key:"warn", text:"Check first", note:warn.text, src:warn.src};
   const w = weather[s.id];
   if(w && w.cond==="Snow on ground") return {key:"warn", text:"Open, but snowy", note:"", src:"Weather"};
-  return {key:"open", text:"Open", note:s.seasonNote||"", src:"Normal season dates"};
+  return {key:"open", text:"Open", note:s.seasonNote||"", src:"Normal season dates, no closure signals found"};
 }
 function statusRank(st){ return st.key==="open"?0:st.key==="warn"?1:2; }
 
-// ---------- Weather-based trail condition ----------
+// ---------- Loading ----------
+async function loadJSON(path){
+  const r=await fetch(path+"?ts="+Date.now(),{cache:"no-store"});
+  if(!r.ok) throw new Error(path+" "+r.status); return r.json();
+}
+async function loadAll(){
+  const [sp, dt, st] = await Promise.allSettled([loadJSON("spots.json"), loadJSON("data.json"), loadJSON("status.json")]);
+  if(sp.status==="fulfilled") SPOTS=sp.value.spots;
+  if(dt.status==="fulfilled") DATA=dt.value;
+  if(st.status==="fulfilled"){ overrides=st.value.spots||{}; statusDate=st.value.updated||null; }
+}
 async function loadWeather(){
+  if(!SPOTS.length) return;
   const lats=SPOTS.map(s=>s.lat).join(","), lons=SPOTS.map(s=>s.lon).join(",");
   const url=`https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}`+
     `&daily=precipitation_sum,snowfall_sum,temperature_2m_max&hourly=snow_depth`+
     `&past_days=3&forecast_days=2&timezone=America%2FLos_Angeles&precipitation_unit=inch&temperature_unit=fahrenheit`;
   try{
-    const r=await fetch(url); const j=await r.json();
-    const arr=Array.isArray(j)?j:[j];
+    const arr=[].concat(await (await fetch(url)).json());
     const hr=72+new Date().getHours();
     arr.forEach((d,i)=>{
       const p=d.daily.precipitation_sum, sn=d.daily.snowfall_sum, t=d.daily.temperature_2m_max;
       const rain2=(p[2]||0)+(p[3]||0), snow3=(sn[0]||0)+(sn[1]||0)+(sn[2]||0)+(sn[3]||0);
-      const depthM=(d.hourly.snow_depth[hr]??0), depthIn=depthM*39.37;
+      const depthIn=(d.hourly.snow_depth[hr]??0)*39.37;
       let cond;
       if(depthIn>=4) cond="Snow on ground";
       else if(depthIn>=1 || snow3>=1) cond="Patchy snow";
@@ -268,24 +209,30 @@ async function loadWeather(){
   }catch(e){ console.log("weather failed",e); }
 }
 
-// ---------- Posted status updates (status.json in this repo) ----------
-async function loadOverrides(){
-  try{
-    const r=await fetch("status.json?ts="+Date.now(),{cache:"no-store"});
-    if(!r.ok) return;
-    const j=await r.json(); overrides=j.spots||{}; statusDate=j.updated||null;
-  }catch(e){}
+// ---------- List ----------
+function parkingHTML(s){
+  const ps=parkingOf(s);
+  if(!ps.length) return `<b>Parking:</b> ${esc(s.noParking||"No verified parking yet.")}`;
+  const checked=DATA.updated?` Checked ${DATA.updated}.`:"";
+  return ps.map(p=>{
+    const ok = p.check==="ok"||p.check==="moved" ? `<span class="ok">✓ Matches the official record.${checked}</span>`
+             : p.check==="multi-source" ? `<span class="ok">✓ ${esc(p.srcNote||"Several sources agree")}</span>`
+             : p.check==="missing" ? `<span class="bad">⚠ Official record not found in the last check</span>` : "";
+    return `<div class="pk"><b>${esc(p.name)}</b>${p.siteStatus==="closed"?' <span class="bad">(marked closed)</span>':""}<br>
+      ${esc(p.road||"")}${p.fee?` Fee: ${esc(p.fee)}.`:""}<br>
+      <small>${SRC_WORDS[p.src]||""}${p.url?` · <a href="${p.url}" target="_blank" rel="noopener">official page ↗</a>`:""} · ${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</small><br>
+      <small>${ok}</small>
+      <div><a class="mb" href="${gLink(p)}" target="_blank" rel="noopener">Google Maps</a><a class="mb" href="${aLink(p)}" target="_blank" rel="noopener">Apple Maps</a><a class="mb" href="#" onclick="showOnMap(${p.lat},${p.lon});return false">Topo map</a></div></div>`;
+  }).join("");
 }
-
-// ---------- Render ----------
 function render(){
   const here = me || HOME;
   let rows = SPOTS.map(s=>{
     const st=statusOf(s), w=weather[s.id];
-    return {s, st, w, d:miles(here,s), cond:w?w.cond:"Unknown", r:myRating(s.id)||s.rating||0};
+    const p0=parkingOf(s)[0]||s;
+    return {s, st, w, d:miles(here,p0), cond:w?w.cond:"Unknown", r:myRating(s.id)||s.rating||0};
   });
   if($("#openOnly").checked) rows=rows.filter(x=>x.st.key!=="closed");
-  const by=$("#sort").value;
   const sorters={
     dist:(a,b)=>a.d-b.d,
     open:(a,b)=>statusRank(a.st)-statusRank(b.st)||a.d-b.d,
@@ -294,17 +241,20 @@ function render(){
     easy:(a,b)=>a.s.diff-b.s.diff||a.d-b.d,
     hard:(a,b)=>b.s.diff-a.s.diff||a.d-b.d
   };
-  rows.sort(sorters[by]);
+  rows.sort(sorters[$("#sort").value]);
 
   $("#list").innerHTML = rows.length ? rows.map(({s,st,w,d,cond})=>{
+    const sd=DATA.spots[s.id]||{};
     const condCls = /Snow|Muddy/.test(cond)?"warn":"";
     const mine=myRating(s.id);
-    const ratingText = s.rating ? `${s.rating}/5 (${s.ratingSrc})` : (s.techSrc||"No outside rating found yet");
+    const ratingText = s.rating ? `${s.rating}/5 (${esc(s.ratingSrc)})` : esc(s.techSrc||"No outside rating found yet");
     const stars=[1,2,3,4,5].map(n=>`<button aria-label="${n} stars" onclick="setMyRating('${s.id}',${n})">${n<=mine?"★":"☆"}</button>`).join("");
-    const wx = w ? `High ${w.hi}°F today · ${w.rain2.toFixed(2)}" rain last 2 days${w.depthIn>=0.5?` · ${w.depthIn.toFixed(0)}" snow`:""} · Tomorrow ${w.tomorrowHi}°F${w.tomorrowRain>=0.05?`, ${w.tomorrowRain.toFixed(2)}" rain`:""}` : "Weather not loaded";
+    const wx = w ? `High ${w.hi}°F today · ${w.rain2.toFixed(2)}" rain last 2 days · Tomorrow ${w.tomorrowHi}°F${w.tomorrowRain>=0.05?`, ${w.tomorrowRain.toFixed(2)}" rain`:""}` : "Weather not loaded";
+    const sn = sd.snow ? `${sd.snow.depthIn}" of snow at the ${esc(sd.snow.station)} sensor (${sd.snow.elevFt.toLocaleString()} ft, ${sd.snow.miles} mi away) on ${sd.snow.date}` : "No snow sensor within 25 miles";
+    const sigs = (sd.signals||[]).map(x=>`<li class="${x.level}">${esc(x.text)}${x.url?` <a href="${x.url}" target="_blank" rel="noopener">↗</a>`:""}</li>`).join("");
     return `<div class="card">
       <div class="top">
-        <div><div class="name">${s.name}<button class="pbtn" title="Parking" aria-label="Where to park" onclick="togglePark('${s.id}')">P</button></div><div class="area">${s.area}</div></div>
+        <div><div class="name">${esc(s.name)}<button class="pbtn" title="Parking" aria-label="Where to park" onclick="togglePark('${s.id}')">P</button></div><div class="area">${esc(s.area)}</div></div>
         <div class="dist">${d.toFixed(0)} mi<small>straight line</small></div>
       </div>
       <div class="pills">
@@ -313,28 +263,27 @@ function render(){
         <span class="pill">${DIFF_WORDS[s.diff]}</span>
         ${mine?`<span class="pill">You: ${mine}★</span>`:(s.rating?`<span class="pill">${s.rating}★</span>`:"")}
       </div>
-      ${st.note?`<div class="why">${st.note}</div>`:""}
+      ${st.note?`<div class="why">${esc(st.note)}</div>`:""}
+      <div class="park" id="park-${s.id}">${parkingHTML(s)}</div>
       <details><summary>Details</summary><div class="more">
-        <p><b>Trails:</b> ${s.trails}</p>
-        <p>${s.notes}</p>
-        <p><b>You need:</b> ${s.pass}</p>
+        <p><b>Trails:</b> ${esc(s.trails)}</p>
+        <p>${esc(s.notes)}</p>
+        <p><b>You need:</b> ${esc(s.pass)}</p>
         <p><b>Weather:</b> ${wx}</p>
+        <p><b>Snow sensor:</b> ${sn}</p>
+        <p><b>Status from:</b> ${esc(st.src)}</p>
+        ${sigs?`<p><b>Things that could affect access:</b></p><ul class="sigs">${sigs}</ul>`:""}
         <p><b>Rating:</b> ${ratingText}</p>
         <p><b>Your rating:</b> <span class="stars">${stars}</span></p>
-        <p style="color:var(--muted);font-size:12.5px">Status from: ${st.src}</p>
-        <div class="links">${s.links.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("")}</div>
+        <div class="links">${(s.links||[]).map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("")}</div>
       </div></details>
-      <div class="park" id="park-${s.id}">
-        <b>Where to park:</b> ${s.park}
-        <div><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.nav)}" target="_blank" rel="noopener">Google Maps</a><a href="https://maps.apple.com/?daddr=${encodeURIComponent(s.nav)}&dirflg=d" target="_blank" rel="noopener">Apple Maps</a><a href="#" onclick="showOnMap('${s.id}');return false">Topo map</a></div>
-      </div>
     </div>`;
   }).join("") : `<div class="card">Nothing open right now with these filters. Uncheck "Open only" to see everything.</div>`;
 
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
-  $("#updated").textContent = `Updated ${t}. Conditions are estimated from recent rain, snow and temperature.` + (statusDate?` Posted status as of ${statusDate}.`:"");
+  $("#updated").textContent = `Updated ${t}. Conditions are estimated from recent rain, snow and temperature.` +
+    (DATA.updated?` Parking and closure checks from ${DATA.updated}.`:"") + (statusDate?` Your posted status as of ${statusDate}.`:"");
 }
-
 function togglePark(id){ const el=document.getElementById("park-"+id); if(el) el.classList.toggle("show"); }
 
 // ---------- Location ----------
@@ -343,35 +292,14 @@ function locate(){
     if(!navigator.geolocation){ $("#where").textContent="Distances from "+HOME.label; return res(); }
     navigator.geolocation.getCurrentPosition(p=>{
       me={lat:p.coords.latitude, lon:p.coords.longitude};
-      $("#where").textContent="Distances from your current location"; res();
+      $("#where").textContent="Distances from your current location to parking"; res();
     },()=>{ $("#where").textContent="Location off – distances from "+HOME.label; res(); },
     {enableHighAccuracy:false, timeout:8000, maximumAge:600000});
   });
 }
 
-// ---------- OpenStreetMap extra trails ----------
-async function osmSearch(){
-  const here=me||HOME, box=$("#osm");
-  box.innerHTML="<li>Searching…</li>";
-  const q=`[out:json][timeout:25];(way["highway"~"path|track|bridleway"]["motorcycle"~"yes|designated|permissive"](around:40000,${here.lat},${here.lon}););out tags center 200;`;
-  try{
-    const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+encodeURIComponent(q)});
-    const j=await r.json();
-    const seen={}; const list=[];
-    j.elements.forEach(e=>{
-      const n=e.tags.name||e.tags.ref; if(!n||seen[n]) return; seen[n]=1;
-      list.push({n, d:miles(here,{lat:e.center.lat,lon:e.center.lon}), id:e.id, lat:e.center.lat, lon:e.center.lon});
-    });
-    list.sort((a,b)=>a.d-b.d);
-    box.innerHTML = list.length ? list.slice(0,40).map(x=>
-      `<li><b>${x.n}</b> · ${x.d.toFixed(0)} mi · <a href="https://www.openstreetmap.org/way/${x.id}" target="_blank" rel="noopener">map ↗</a></li>`).join("")
-      : "<li>No tagged motorcycle trails found within 25 miles.</li>";
-  }catch(e){ box.innerHTML="<li>Couldn't reach OpenStreetMap. Try again in a minute.</li>"; }
-}
-
-
 // ---------- Topo map ----------
-let map=null, meMarker=null, meCircle=null, follow=false, watchId=null, trailsLoaded=false;
+let map=null, meMarker=null, meCircle=null, follow=false, watchId=null, trailsLoaded=false, pinLayer=null;
 function setHeaderVar(){ document.documentElement.style.setProperty("--hdr", document.querySelector("header").offsetHeight+"px"); }
 function openTab(which){
   const isMap=which==="map";
@@ -380,44 +308,54 @@ function openTab(which){
   setHeaderVar();
   if(isMap){ initMap(); setTimeout(()=>map.invalidateSize(),50); startWatch(); }
 }
+function drawPins(){
+  if(!map) return;
+  if(pinLayer) pinLayer.remove();
+  pinLayer=L.layerGroup().addTo(map);
+  SPOTS.forEach(s=>{
+    const st=statusOf(s);
+    parkingOf(s).forEach(p=>{
+      L.marker([p.lat,p.lon],{icon:L.divIcon({className:"",html:'<div class="p-pin">P</div>',iconSize:[24,24],iconAnchor:[12,12]})})
+       .addTo(pinLayer).bindPopup(`<b>${esc(p.name)}</b><br>${esc(s.name)} · ${st.text}${weather[s.id]?" · "+weather[s.id].cond:""}<br>${esc(p.road||"")}<br><small>${SRC_WORDS[p.src]||""}</small><br>
+         <a href="${gLink(p)}" target="_blank">Google Maps</a> · <a href="${aLink(p)}" target="_blank">Apple Maps</a>`);
+    });
+  });
+}
 function initMap(){
   if(map) return;
   const here=me||HOME;
-  map=L.map("map",{zoomControl:true}).setView([here.lat,here.lon],10);
-  const usgs=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:16,maxNativeZoom:16,attribution:"USGS The National Map"});
+  map=L.map("map").setView([here.lat,here.lon],10);
+  const usgs=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:17,maxNativeZoom:16,attribution:"USGS The National Map"});
   const otm=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenTopoMap (CC-BY-SA), © OpenStreetMap"});
-  const sat=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:16,attribution:"USGS The National Map"});
+  const sat=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:17,maxNativeZoom:16,attribution:"USGS The National Map"});
   usgs.addTo(map);
   L.control.layers({"USGS Topo":usgs,"OpenTopoMap":otm,"Satellite + topo":sat},null,{position:"topright"}).addTo(map);
   L.control.scale({imperial:true,metric:false}).addTo(map);
-  // parking pins
-  SPOTS.forEach(s=>{
-    const st=statusOf(s);
-    L.marker([s.lat,s.lon],{icon:L.divIcon({className:"",html:'<div class="p-pin">P</div>',iconSize:[24,24],iconAnchor:[12,12]})})
-     .addTo(map).bindPopup(`<b>${s.name}</b><br>${st.text}${weather[s.id]?" · "+weather[s.id].cond:""}<br>${s.park}<br>
-       <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.nav)}" target="_blank">Google Maps</a> ·
-       <a href="https://maps.apple.com/?daddr=${encodeURIComponent(s.nav)}&dirflg=d" target="_blank">Apple Maps</a>`);
-  });
+  drawPins();
   map.on("dragstart",()=>{ if(follow){ follow=false; $("#locBtn").classList.remove("follow"); } });
   loadTrails();
 }
 async function loadTrails(){
   if(trailsLoaded) return;
   try{
-    const r=await fetch("trails.geojson?ts="+Date.now(),{cache:"no-store"});
-    if(!r.ok) throw 0;
-    const g=await r.json();
+    const g=await loadJSON("trails.geojson");
     L.geoJSON(g,{
-      style:f=>({color:f.properties.moto==="designated"?"#c2410c":"#e8590c",weight:f.properties.hw==="track"?3:4,opacity:.9,dashArray:f.properties.hw==="track"?"6 5":null}),
+      style:f=>{const p=f.properties, track=p.hw==="track";
+        return {color:p.src==="usfs"?"#c2410c":"#f08c00",weight:track?3:3.5,opacity:.9,dashArray:track?"6 5":null};},
       onEachFeature:(f,l)=>{
         const p=f.properties;
-        l.bindPopup(`<b>${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}</b><br>${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+p.surface:""}<br>Motorcycles: ${p.moto||"see signs"}<br><a href="https://www.openstreetmap.org/way/${p.id}" target="_blank">OpenStreetMap ↗</a>`);
+        const title=p.src==="usfs" ? `${esc(p.name)} #${esc(p.no)}` : `${esc(p.name||"Unnamed trail")}${p.ref?" #"+esc(p.ref):""}`;
+        const body=p.src==="usfs"
+          ? `Official Forest Service route · ${p.miles} mi<br>Motorcycles allowed per: ${esc(p.why)}`
+          : `${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+esc(p.surface):""}<br>Motorcycles: ${esc(p.moto||"see signs")} (OpenStreetMap)<br><a href="https://www.openstreetmap.org/way/${p.id}" target="_blank">OpenStreetMap ↗</a>`;
+        l.bindPopup(`<b>${title}</b><br>${body}`);
       }
     }).addTo(map);
     trailsLoaded=true;
-    $("#mapInfo").innerHTML=`<b style="color:#e8590c">━</b> Single track &nbsp; <b style="color:#e8590c">┅</b> Dirt road · ${g.features.length} trail pieces · Trail data updated ${g.updated||"?"}. Always check the signs.`;
+    const n=g.features.length;
+    $("#mapInfo").innerHTML=`<b style="color:#c2410c">━</b> Forest Service route <b style="color:#f08c00">━</b> OpenStreetMap trail <b style="color:#f08c00">┅</b> dirt road · <b style="color:#2f5fb3">P</b> verified parking · ${n} trail pieces · ${g.updated||""}. Always check the signs.`;
   }catch(e){
-    $("#mapInfo").textContent="Trail lines aren't loaded yet. The topo map still shows trails as thin dashed lines.";
+    $("#mapInfo").textContent="Trail lines didn't load. The topo map still shows trails as thin dashed lines.";
   }
 }
 function startWatch(){
@@ -433,9 +371,16 @@ function startWatch(){
   },()=>{ $("#mapInfo").textContent="Turn on location for this site to see yourself on the map."; },
   {enableHighAccuracy:true, maximumAge:5000, timeout:20000});
 }
-function showOnMap(id){
-  const s=SPOTS.find(x=>x.id===id); openTab("map");
-  setTimeout(()=>map.setView([s.lat,s.lon],14),80);
+function showOnMap(lat,lon){ openTab("map"); setTimeout(()=>map.setView([lat,lon],15),80); }
+
+// ---------- Start ----------
+async function refreshAll(){
+  $("#refresh").textContent="↻ Loading…";
+  await loadAll();
+  render();
+  await loadWeather();
+  render(); drawPins();
+  $("#refresh").textContent="↻ Refresh";
 }
 $("#tabList").onclick=()=>openTab("list");
 $("#tabMap").onclick=()=>openTab("map");
@@ -445,20 +390,10 @@ $("#locBtn").onclick=()=>{
   startWatch();
 };
 window.addEventListener("resize",setHeaderVar);
-
-// ---------- Start ----------
-async function refreshAll(){
-  $("#refresh").textContent="↻ Loading…";
-  await Promise.all([loadWeather(), loadOverrides()]);
-  render();
-  $("#refresh").textContent="↻ Refresh";
-}
 $("#sort").onchange=render;
 $("#openOnly").onchange=render;
 $("#refresh").onclick=async()=>{ await locate(); await refreshAll(); };
-$("#osmBtn").onclick=osmSearch;
-render();
-locate().then(refreshAll);
+refreshAll().then(()=>locate()).then(render);
 </script>
 </body>
 </html>
