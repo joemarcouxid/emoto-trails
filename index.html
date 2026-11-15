@@ -546,23 +546,34 @@ let graph=null, routeLayer=null, routeDest=null, routeFromGps=false, lastRouteAt
 function gkey(lon,lat){ return Math.round(lat*1e4)+","+Math.round(lon*1e4); }
 function buildGraph(){
   const feats=[...(trailsGeo?trailsGeo.features.map(f=>[f,true]):[]), ...(branchesGeo?branchesGeo.features.map(f=>[f,false]):[])];
-  const nodes=new Map(), adj=new Map(), cells=new Map();
-  const node=(lon,lat)=>{ const k=gkey(lon,lat); if(!nodes.has(k)){ nodes.set(k,[lon,lat]); adj.set(k,[]);
-      const c=Math.round(lat*1e3)+","+Math.round(lon*1e3); (cells.get(c)||cells.set(c,[]).get(c)).push(k); } return k; };
+  const nodes=new Map(), adj=new Map(), cells=new Map(), owner=new Map();
+  const cellOf=(lon,lat)=>Math.round(lat*1e3)+","+Math.round(lon*1e3);
+  const node=(lon,lat,fi)=>{ const k=gkey(lon,lat); if(!nodes.has(k)){ nodes.set(k,[lon,lat]); adj.set(k,[]); owner.set(k,new Set());
+      const c=cellOf(lon,lat); (cells.get(c)||cells.set(c,[]).get(c)).push(k); } owner.get(k).add(fi); return k; };
   const len=(a,b)=>miles({lat:a[1],lon:a[0]},{lat:b[1],lon:b[0]})*1609.34;
-  const addEdge=(a,b,info)=>{ if(a===b) return; const d=len(nodes.get(a),nodes.get(b)); adj.get(a).push([b,d,info]); adj.get(b).push([a,d,info]); };
-  const ends=[];
-  feats.forEach(([f,ok])=>{
+  const linked=(a,b)=>adj.get(a).some(e=>e[0]===b);
+  const addEdge=(a,b,info)=>{ if(a===b||linked(a,b)) return; const d=len(nodes.get(a),nodes.get(b)); adj.get(a).push([b,d,info]); adj.get(b).push([a,d,info]); };
+  const ends=new Set();
+  feats.forEach(([f,ok],fi)=>{
     const p=f.properties, info={t:ok?trailTitle(p):(p.name||(p.hw==="track"?"Dirt road":"Unnamed trail"))+(p.ref&&!ok?" ("+p.ref+")":""), ok};
     const cs=f.geometry.coordinates; let prev=null;
-    cs.forEach((c,i)=>{ const k=node(c[0],c[1]); if(prev) addEdge(prev,k,info); prev=k; if(i===0||i===cs.length-1) ends.push(k); });
+    cs.forEach((c,i)=>{ const k=node(c[0],c[1],fi); if(prev) addEdge(prev,k,info); prev=k; if(i===0||i===cs.length-1) ends.add(k); });
   });
-  // join trail ends to the nearest point on another line within 30 m (data sources don't always share exact points)
-  const near=(k,maxM)=>{ const [lon,lat]=nodes.get(k); let best=null;
-    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){ const c=(Math.round(lat*1e3)+dy)+","+(Math.round(lon*1e3)+dx);
-      (cells.get(c)||[]).forEach(o=>{ if(o===k) return; if(adj.get(k).some(e=>e[0]===o)) return; const d=len(nodes.get(k),nodes.get(o)); if(d<=maxM&&(!best||d<best.d)) best={o,d}; }); }
-    return best; };
-  ends.forEach(k=>{ const b=near(k,30); if(b) addEdge(k,b.o,{t:"connector",ok:true,conn:true}); });
+  // Lines from different sources often cross or meet without sharing an exact point.
+  // Join them where they come within 12 m, and join loose trail ends within 50 m.
+  const CONN={t:"connector",ok:true,conn:true};
+  nodes.forEach((pt,k)=>{
+    const maxM=ends.has(k)?50:12; let best=null;
+    const [lon,lat]=pt, cy=Math.round(lat*1e3), cx=Math.round(lon*1e3);
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      (cells.get((cy+dy)+","+(cx+dx))||[]).forEach(o=>{
+        if(o===k) return;
+        const shared=[...owner.get(k)].some(fi=>owner.get(o).has(fi)); if(shared) return;
+        const d=len(pt,nodes.get(o)); if(d<=maxM && (!best||d<best.d)) best={o,d};
+      });
+    }
+    if(best) addEdge(k,best.o,CONN);
+  });
   graph={nodes,adj,cells};
 }
 function snap(lat,lon,maxM=800){
@@ -583,8 +594,9 @@ function dijkstra(src,dst){
   if(!prev.has(dst) && src!==dst) return null;
   const path=[dst], legs=[]; let cur=dst;
   while(cur!==src){ const [u,info,w]=prev.get(cur); path.push(u);
-    const t=info.conn?(legs[0]?.t||"connector"):info.t;
-    if(legs[0] && legs[0].t===t){ legs[0].m+=w; } else legs.unshift({t,m:w,ok:info.ok}); cur=u; }
+    if(info.conn){ if(legs[0]) legs[0].m+=w; else legs.unshift({t:"connector",m:w,ok:true,conn:true}); cur=u; continue; }
+    if(legs[0] && legs[0].conn){ legs[0]={t:info.t,m:legs[0].m+w,ok:info.ok}; }
+    else if(legs[0] && legs[0].t===info.t){ legs[0].m+=w; } else legs.unshift({t:info.t,m:w,ok:info.ok}); cur=u; }
   return {path:path.reverse(), legs};
 }
 function routeTo(lat,lon,label){
