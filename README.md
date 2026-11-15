@@ -11,7 +11,10 @@ Edit `status.json` on GitHub. Example:
 ```json
 "devils-gulch": { "status": "closed", "note": "Fire closure – see Forest Service alerts." }
 ```
-Spot ids: devils-gulch, beehive, tronsen, mad-river, entiat-ridge, naneum, taneum, moses-dunes, beverly
+Spot ids: devils-gulch, beehive, mission-ridge, tronsen, mad-river, entiat-ridge, naneum, taneum, moses-dunes, beverly
 
 ## Turn on GitHub Pages
 Settings → Pages → Deploy from branch → `main` / root.
+
+## Trail map
+`trails.geojson` holds every trail OpenStreetMap lists as open to motorcycles in this area. A GitHub Action (`.github/workflows/update-trails.yml`) refreshes it every Monday. You can also run it by hand from the Actions tab.

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>E-Moto Ride Finder</title>
 <meta name="theme-color" content="#1d2a1f">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root{
     --bg:#f4f1ea; --card:#fffdf8; --ink:#1d2a1f; --muted:#6b7166; --line:#e2ddd2;
@@ -51,6 +53,20 @@
   .osm li{margin:4px 0;font-size:14px}
   .rules{font-size:13.5px}
   .rules li{margin:4px 0}
+  .tabs{display:flex;gap:6px;margin-top:10px}
+  .tabs button{flex:1;background:#ffffff10}
+  .tabs button.on{background:#fff;color:var(--accent);font-weight:650}
+  #mapView{display:none;position:fixed;left:0;right:0;bottom:0;top:var(--hdr,120px)}
+  #map{position:absolute;inset:0}
+  body.map main,body.map footer,body.map .listonly{display:none}
+  body.map #mapView{display:block}
+  .mapbtn{position:absolute;z-index:500;right:10px;background:#fff;color:var(--ink);border:1px solid #0003;border-radius:10px;font-size:15px;padding:9px 12px;box-shadow:0 1px 4px #0003;cursor:pointer}
+  #locBtn{bottom:28px} #locBtn.follow{background:#2f5fb3;color:#fff}
+  #mapInfo{position:absolute;z-index:500;left:10px;bottom:28px;right:120px;background:#fffffff0;border-radius:10px;padding:7px 10px;font-size:12.5px;box-shadow:0 1px 4px #0003}
+  .me-dot{width:16px;height:16px;border-radius:50%;background:#2f7bf6;border:3px solid #fff;box-shadow:0 0 0 2px #2f7bf680}
+  .p-pin{background:#2f5fb3;color:#fff;font-weight:800;border-radius:6px;border:2px solid #fff;text-align:center;line-height:20px;font-size:13px;box-shadow:0 1px 3px #0006}
+  .leaflet-popup-content{font-size:13.5px}
+  .leaflet-popup-content a{color:#2f5fb3}
   footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
 </style>
 </head>
@@ -58,7 +74,8 @@
 <header>
   <h1>E-Moto Ride Finder</h1>
   <div class="sub" id="where">Finding your location…</div>
-  <div class="bar">
+  <div class="tabs"><button id="tabList" class="on">List</button><button id="tabMap">Map</button></div>
+  <div class="bar listonly">
     <select id="sort" aria-label="Sort by">
       <option value="dist">Closest first</option>
       <option value="open">Open first</option>
@@ -89,6 +106,11 @@
     <li>Not street legal: you can't ride on paved county roads to get to a trailhead.</li>
   </ul>
 </main>
+<div id="mapView">
+  <div id="map"></div>
+  <div id="mapInfo">Loading trails…</div>
+  <button id="locBtn" class="mapbtn" title="Show and follow my location">◎ Me</button>
+</div>
 <footer>Weather: Open-Meteo · Extra trails: © OpenStreetMap contributors · Status can change fast. Check the official link before you drive.</footer>
 
 <script>
@@ -113,6 +135,16 @@ const SPOTS = [
    notes:"Higher-elevation start for the same system. Beehive #1202 is short and easy; Mission Ridge #1201 is rated advanced.",
    pass:"Northwest Forest Pass + ORV tag",
    links:[["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"],["Trail map (PDF)","https://www.fs.usda.gov/media/232877"]]},
+
+  {id:"mission-ridge", park:"Mission Ridge Trailhead. It's not the ski area lot, so follow the trailhead signs.",
+   name:"Mission Ridge Trailhead", area:"Below Mission Peak, near Mission Ridge ski area",
+   lat:47.3058, lon:-120.4356, nav:"Mission Ridge Trailhead, Wenatchee, WA",
+   season:null, seasonNote:"High elevation. Expect snow in winter.",
+   diff:4, rating:null, ratingSrc:null,
+   trails:"Mission Ridge #1201 (rated advanced), links to Devils Gulch and Beehive",
+   notes:"Closest way onto Mission Ridge #1201 from the Wenatchee side. Mission Peak is right above it.",
+   pass:"Northwest Forest Pass + ORV tag",
+   links:[["Trailhead info","https://www.fs.usda.gov/r06/okanogan-wenatchee/recreation/opportunities/highway-vehicles-ohv?page=%2C2"],["Forest Service alerts","https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"]]},
 
   {id:"tronsen", park:"Upper Tronsen Ridge OHV Trailhead. No parking fee here.", name:"Upper Tronsen Ridge OHV Trailhead", area:"Near Blewett Pass, Hwy 97",
    lat:47.355, lon:-120.560, nav:"Upper Tronsen Ridge OHV Trailhead, WA",
@@ -294,7 +326,7 @@ function render(){
       </div></details>
       <div class="park" id="park-${s.id}">
         <b>Where to park:</b> ${s.park}
-        <div><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.nav)}" target="_blank" rel="noopener">Google Maps</a><a href="https://maps.apple.com/?daddr=${encodeURIComponent(s.nav)}&dirflg=d" target="_blank" rel="noopener">Apple Maps</a></div>
+        <div><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.nav)}" target="_blank" rel="noopener">Google Maps</a><a href="https://maps.apple.com/?daddr=${encodeURIComponent(s.nav)}&dirflg=d" target="_blank" rel="noopener">Apple Maps</a><a href="#" onclick="showOnMap('${s.id}');return false">Topo map</a></div>
       </div>
     </div>`;
   }).join("") : `<div class="card">Nothing open right now with these filters. Uncheck "Open only" to see everything.</div>`;
@@ -336,6 +368,83 @@ async function osmSearch(){
       : "<li>No tagged motorcycle trails found within 25 miles.</li>";
   }catch(e){ box.innerHTML="<li>Couldn't reach OpenStreetMap. Try again in a minute.</li>"; }
 }
+
+
+// ---------- Topo map ----------
+let map=null, meMarker=null, meCircle=null, follow=false, watchId=null, trailsLoaded=false;
+function setHeaderVar(){ document.documentElement.style.setProperty("--hdr", document.querySelector("header").offsetHeight+"px"); }
+function openTab(which){
+  const isMap=which==="map";
+  document.body.classList.toggle("map",isMap);
+  $("#tabMap").classList.toggle("on",isMap); $("#tabList").classList.toggle("on",!isMap);
+  setHeaderVar();
+  if(isMap){ initMap(); setTimeout(()=>map.invalidateSize(),50); startWatch(); }
+}
+function initMap(){
+  if(map) return;
+  const here=me||HOME;
+  map=L.map("map",{zoomControl:true}).setView([here.lat,here.lon],10);
+  const usgs=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:16,maxNativeZoom:16,attribution:"USGS The National Map"});
+  const otm=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenTopoMap (CC-BY-SA), © OpenStreetMap"});
+  const sat=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:16,attribution:"USGS The National Map"});
+  usgs.addTo(map);
+  L.control.layers({"USGS Topo":usgs,"OpenTopoMap":otm,"Satellite + topo":sat},null,{position:"topright"}).addTo(map);
+  L.control.scale({imperial:true,metric:false}).addTo(map);
+  // parking pins
+  SPOTS.forEach(s=>{
+    const st=statusOf(s);
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:"",html:'<div class="p-pin">P</div>',iconSize:[24,24],iconAnchor:[12,12]})})
+     .addTo(map).bindPopup(`<b>${s.name}</b><br>${st.text}${weather[s.id]?" · "+weather[s.id].cond:""}<br>${s.park}<br>
+       <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.nav)}" target="_blank">Google Maps</a> ·
+       <a href="https://maps.apple.com/?daddr=${encodeURIComponent(s.nav)}&dirflg=d" target="_blank">Apple Maps</a>`);
+  });
+  map.on("dragstart",()=>{ if(follow){ follow=false; $("#locBtn").classList.remove("follow"); } });
+  loadTrails();
+}
+async function loadTrails(){
+  if(trailsLoaded) return;
+  try{
+    const r=await fetch("trails.geojson?ts="+Date.now(),{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const g=await r.json();
+    L.geoJSON(g,{
+      style:f=>({color:f.properties.moto==="designated"?"#c2410c":"#e8590c",weight:f.properties.hw==="track"?3:4,opacity:.9,dashArray:f.properties.hw==="track"?"6 5":null}),
+      onEachFeature:(f,l)=>{
+        const p=f.properties;
+        l.bindPopup(`<b>${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}</b><br>${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+p.surface:""}<br>Motorcycles: ${p.moto||"see signs"}<br><a href="https://www.openstreetmap.org/way/${p.id}" target="_blank">OpenStreetMap ↗</a>`);
+      }
+    }).addTo(map);
+    trailsLoaded=true;
+    $("#mapInfo").innerHTML=`<b style="color:#e8590c">━</b> Single track &nbsp; <b style="color:#e8590c">┅</b> Dirt road · ${g.features.length} trail pieces · Trail data updated ${g.updated||"?"}. Always check the signs.`;
+  }catch(e){
+    $("#mapInfo").textContent="Trail lines aren't loaded yet. The topo map still shows trails as thin dashed lines.";
+  }
+}
+function startWatch(){
+  if(watchId!==null || !navigator.geolocation) return;
+  watchId=navigator.geolocation.watchPosition(p=>{
+    const ll=[p.coords.latitude,p.coords.longitude];
+    me={lat:ll[0],lon:ll[1]};
+    if(!meMarker){
+      meCircle=L.circle(ll,{radius:p.coords.accuracy,color:"#2f7bf6",weight:1,fillOpacity:.12}).addTo(map);
+      meMarker=L.marker(ll,{icon:L.divIcon({className:"",html:'<div class="me-dot"></div>',iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:1000}).addTo(map);
+    }else{ meMarker.setLatLng(ll); meCircle.setLatLng(ll).setRadius(p.coords.accuracy); }
+    if(follow) map.setView(ll, Math.max(map.getZoom(),14));
+  },()=>{ $("#mapInfo").textContent="Turn on location for this site to see yourself on the map."; },
+  {enableHighAccuracy:true, maximumAge:5000, timeout:20000});
+}
+function showOnMap(id){
+  const s=SPOTS.find(x=>x.id===id); openTab("map");
+  setTimeout(()=>map.setView([s.lat,s.lon],14),80);
+}
+$("#tabList").onclick=()=>openTab("list");
+$("#tabMap").onclick=()=>openTab("map");
+$("#locBtn").onclick=()=>{
+  follow=!follow; $("#locBtn").classList.toggle("follow",follow);
+  if(follow && meMarker) map.setView(meMarker.getLatLng(),Math.max(map.getZoom(),14));
+  startWatch();
+};
+window.addEventListener("resize",setHeaderVar);
 
 // ---------- Start ----------
 async function refreshAll(){
