@@ -6,7 +6,7 @@ QUERY = f"""
 [out:json][timeout:180];
 (
   way["highway"~"^(path|track|bridleway|footway|cycleway)$"]["motorcycle"~"^(yes|designated|permissive)$"]({BBOX});
-  way["highway"]["name"~"(ORV|OHV|Motorcycle)",i]["motorcycle"!~"^(no|private)$"]({BBOX});
+  way["highway"]["name"~"(^| )(ORV|OHV)( |$)|Motorcycle"]["motorcycle"!~"^(no|private)$"]({BBOX});
 );
 out tags geom;
 """
