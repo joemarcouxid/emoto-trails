@@ -549,8 +549,12 @@ function showOnMap(lat,lon){ openTab("map"); setTimeout(()=>map.setView([lat,lon
 // ---------- Trail routing: highlight the way from where you are to the branch you pick ----------
 let graph=null, routeLayer=null, routeDest=null, routeFromGps=false, lastRouteAt=0, branchesGeo=null;
 function gkey(lon,lat){ return Math.round(lat*1e4)+","+Math.round(lon*1e4); }
-function buildGraph(){
-  const feats=[...(trailsGeo?trailsGeo.features.map(f=>[f,true]):[]), ...(branchesGeo?branchesGeo.features.map(f=>[f,false]):[])];
+let graphBox=null;
+function buildGraph(box){
+  // Only the area around the route, so it stays fast on a phone
+  const inBox=f=>!box||f.geometry.coordinates.some((c,i)=>i%4===0&&c[1]>=box[0]&&c[1]<=box[2]&&c[0]>=box[1]&&c[0]<=box[3]);
+  const feats=[...(trailsGeo?trailsGeo.features.filter(inBox).map(f=>[f,true]):[]), ...(branchesGeo?branchesGeo.features.filter(inBox).map(f=>[f,false]):[])];
+  graphBox=box;
   const nodes=new Map(), adj=new Map(), cells=new Map(), owner=new Map();
   const cellOf=(lon,lat)=>Math.round(lat*1e3)+","+Math.round(lon*1e3);
   const node=(lon,lat,fi)=>{ const k=gkey(lon,lat); if(!nodes.has(k)){ nodes.set(k,[lon,lat]); adj.set(k,[]); owner.set(k,new Set());
@@ -604,8 +608,12 @@ function dijkstra(src,dst){
     else if(legs[0] && legs[0].t===info.t){ legs[0].m+=w; } else legs.unshift({t:info.t,m:w,ok:info.ok}); cur=u; }
   return {path:path.reverse(), legs};
 }
+function ensureGraph(pts){
+  const pad=0.12, box=[Math.min(...pts.map(p=>p.lat))-pad, Math.min(...pts.map(p=>p.lon))-pad, Math.max(...pts.map(p=>p.lat))+pad, Math.max(...pts.map(p=>p.lon))+pad];
+  const covered=graph&&graphBox&&box[0]>=graphBox[0]&&box[1]>=graphBox[1]&&box[2]<=graphBox[2]&&box[3]<=graphBox[3];
+  if(!covered){ const big=[box[0]-0.1,box[1]-0.1,box[2]+0.1,box[3]+0.1]; buildGraph(big); }
+}
 function routeTo(lat,lon,label){
-  if(!graph) buildGraph();
   routeDest={lat,lon,label:label||"selected point"};
   map.closePopup();
   drawRoute(true);
@@ -613,10 +621,13 @@ function routeTo(lat,lon,label){
 function drawRoute(fit){
   if(!routeDest) return;
   let start, from;
-  const meSnap = me ? snap(me.lat,me.lon,2000) : null;
+  const npDest=nearestParking(routeDest.lat,routeDest.lon);
+  const nearMe = me && miles(me,routeDest)<25;
+  ensureGraph([routeDest, nearMe?me:(npDest?npDest.p:routeDest)]);
+  const meSnap = nearMe ? snap(me.lat,me.lon,2000) : null;
   if(meSnap){ start=meSnap; from="your location"; routeFromGps=true; }
   else{
-    const np=nearestParking(routeDest.lat,routeDest.lon);
+    const np=npDest;
     start=np && snap(np.p.lat,np.p.lon,1000); from=np?np.p.name:"parking"; routeFromGps=false;
   }
   const end=snap(routeDest.lat,routeDest.lon,300);

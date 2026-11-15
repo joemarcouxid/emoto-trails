@@ -210,8 +210,12 @@ def spot_points(s):
     return [(p["lon"], p["lat"]) for p in s.get("parking", [])] or [(s["lon"], s["lat"])]
 for f in confirmed:
     pr = f["properties"]; cs = f["geometry"]["coordinates"]; mid = cs[len(cs) // 2]
-    ids = [s["id"] for s in spots if (pr.get("no") and pr["no"] in s.get("trailNos", []))
-           or min(meters(mid, q) for q in spot_points(s)) <= 8000]
+    def belongs(s):
+        if pr.get("no") and pr["no"] in s.get("trailNos", []): return True
+        d = min(meters(mid, q) for q in spot_points(s))
+        # Spots with a named trail list only pick up other trails right next to their parking
+        return d <= (3000 if s.get("trailNos") else 8000)
+    ids = [s["id"] for s in spots if belongs(s)]
     if ids: pr["spots"] = ids
     pr["len"] = round(sum(meters(cs[i], cs[i + 1]) for i in range(len(cs) - 1)) / 1609.34, 2)
 
