@@ -218,36 +218,6 @@
      "text": "Longmire Meadow OHV staging is marked closed by the Forest Service.",
      "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58361",
      "src": "official site status"
-    },
-    {
-     "level": "warn",
-     "text": "Forest Service alert mentions Naches Ranger District: Indian Creek Road and Trail Motorized Use Closure on the Naches Ranger District",
-     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/indian-creek-road-and-trail-motorized-use-closure-naches-ranger",
-     "src": "Forest Service alerts"
-    },
-    {
-     "level": "warn",
-     "text": "Forest Service alert mentions Naches Ranger District: Wildcat Road Motorized Vehicle Closure on Naches Ranger District",
-     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/wildcat-road-motorized-vehicle-closure-naches-ranger-district",
-     "src": "Forest Service alerts"
-    },
-    {
-     "level": "warn",
-     "text": "Forest Service alert mentions Naches Ranger District: Little Rattlesnake 4WD Trail Vehicle Use Restrictions on the Naches Ranger District",
-     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/little-rattlesnake-4wd-trail-vehicle-use-restrictions-naches-ranger",
-     "src": "Forest Service alerts"
-    },
-    {
-     "level": "warn",
-     "text": "Forest Service alert mentions Naches Ranger District: Norse Peak and Clearwater Wilderness Use Restrictions on the Naches Ranger District",
-     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/norse-peak-and-clearwater-wilderness-use-restrictions-naches-ranger",
-     "src": "Forest Service alerts"
-    },
-    {
-     "level": "warn",
-     "text": "Forest Service alert mentions Naches Ranger District: South Fork Tieton Road Speed Limit on the Naches Ranger District",
-     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/south-fork-tieton-road-speed-limit-naches-ranger-district",
-     "src": "Forest Service alerts"
     }
    ],
    "parking": [
@@ -281,18 +251,15 @@
    "snow": null
   },
   "beverly": {
-   "signals": [
-    {
-     "level": "warn",
-     "text": "The DNR record for Beverly Dunes ORV Area (DNR) wasn't found in today's check.",
-     "url": null,
-     "src": "parking check"
-    }
-   ],
+   "signals": [],
    "parking": [
     {
      "name": "Beverly Dunes ORV Area (DNR)",
-     "check": "missing"
+     "check": "ok",
+     "movedM": 0,
+     "lat": 46.83032,
+     "lon": -119.89313,
+     "status": "open"
     }
    ],
    "snow": null
@@ -300,7 +267,7 @@
  },
  "sources": {
   "osm": "ok, 138 segments",
-  "usfs_trails": "ok, 67 segments, 49 trails",
+  "usfs_trails": "ok, 58 segments, 41 trails",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 69 alerts scanned",
