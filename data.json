@@ -266,8 +266,9 @@
   }
  },
  "sources": {
-  "osm": "ok, 138 segments",
-  "usfs_trails": "ok, 58 segments, 41 trails",
+  "osm": "ok, 85 segments",
+  "usfs_trails": "ok, 57 segments, 42 trails",
+  "branches": "ok, 1041 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 69 alerts scanned",
