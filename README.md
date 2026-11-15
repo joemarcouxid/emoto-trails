@@ -21,7 +21,7 @@ Edit `status.json` on GitHub. Example:
 ```json
 "devils-gulch": { "status": "closed", "note": "Fire closure – see Forest Service alerts." }
 ```
-Spot ids: devils-gulch, beehive, mission-ridge, stemilt, tronsen, mad-river, chiwawa, naneum, taneum, little-naches, moses-dunes, beverly
+Spot ids: devils-gulch, beehive, mission-ridge, stemilt, mitchell-creek, methow-sawtooth, ahtanum, reiter, walker-valley, elbe-hills, tronsen, mad-river, chiwawa, naneum, taneum, little-naches, moses-dunes, beverly
 
 ## Turn on GitHub Pages
 Settings → Pages → Deploy from branch → `main` / root.

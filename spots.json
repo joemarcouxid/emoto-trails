@@ -638,6 +638,289 @@
      "https://dnr.wa.gov/recreation/where-go-what-do"
     ]
    ]
+  },
+  {
+   "id": "mitchell-creek",
+   "name": "Mitchell Creek ATV/ORV Loop",
+   "area": "Grade Creek Rd (FS 8200), south shore of Lake Chelan",
+   "lat": 47.99677,
+   "lon": -120.15148,
+   "season": [
+    6,
+    1,
+    10,
+    31
+   ],
+   "seasonNote": "Forest roads; usually snow-free June – October",
+   "diff": 2,
+   "rating": null,
+   "trails": "FS road 8200-112 and FS 8215 (East Fork Mitchell Rd) loop, plus a short link on FS 8200",
+   "trailNos": [],
+   "roadIds": [
+    "8200112",
+    "8215000"
+   ],
+   "keywords": [
+    "Mitchell Creek",
+    "8215",
+    "8200"
+   ],
+   "notes": "A Forest Service ATV/ORV route on forest roads, not single track. ORVs are allowed only on the loop roads and the short connecting section of FS 8200.",
+   "pass": "ORV tag",
+   "parking": [
+    {
+     "name": "Loop start, FS 8200 Grade Creek Rd",
+     "lat": 47.99677,
+     "lon": -120.15148,
+     "src": "usfs",
+     "srcId": 57277,
+     "road": "Forest Service map point for the route start. There's no developed lot, so pull fully off the road where it's safe.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=57277"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ]
+   ]
+  },
+  {
+   "id": "methow-sawtooth",
+   "name": "Foggy Dew / Crater Creek (Methow)",
+   "area": "Gold Creek area, south of Carlton",
+   "lat": 48.17926,
+   "lon": -120.25307,
+   "season": [
+    6,
+    15,
+    10,
+    31
+   ],
+   "seasonNote": "High country; usually snow-free mid-June through October",
+   "diff": 4,
+   "rating": null,
+   "trails": "Foggy Dew #417, Navarre Way #424, Crater Creek #416, Martin Creek #429, Eagle Lakes #431",
+   "trailNos": [
+    "417",
+    "424",
+    "416",
+    "429",
+    "431"
+   ],
+   "keywords": [
+    "Foggy Dew",
+    "Crater Creek",
+    "Navarre",
+    "Eagle Lakes",
+    "Martin Creek",
+    "Sawtooth"
+   ],
+   "notes": "Single track in the Sawtooth backcountry. The Forest Service says some trails here are closed to motorcycles, so check the Sawtooth Backcountry trail brochure before you go.",
+   "pass": "$5/day fee or Northwest Forest Pass, plus ORV tag",
+   "parking": [
+    {
+     "name": "Foggy Dew Trailhead",
+     "lat": 48.17926,
+     "lon": -120.25307,
+     "src": "usfs",
+     "srcId": 59249,
+     "road": "Foggy Dew #417 and Navarre Way #424.",
+     "fee": "$5/vehicle/day",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59249"
+    },
+    {
+     "name": "Crater Creek Trailhead",
+     "lat": 48.22037,
+     "lon": -120.26789,
+     "src": "usfs",
+     "srcId": 59165,
+     "road": "Crater Creek #416, Martin Lakes #429, Eagle Lakes #431. Too narrow for 4-wheelers.",
+     "fee": "$5/vehicle/day",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=59165"
+    }
+   ],
+   "links": [
+    [
+     "Forest Service alerts",
+     "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts"
+    ]
+   ]
+  },
+  {
+   "id": "ahtanum",
+   "name": "Ahtanum State Forest",
+   "area": "West of Yakima via Ahtanum Rd and Middle Fork Rd (A-2000)",
+   "lat": 46.51068,
+   "lon": -121.02082,
+   "season": [
+    5,
+    1,
+    11,
+    30
+   ],
+   "seasonNote": "Snowmobile area in winter; wheeled riding usually from about May 1",
+   "diff": 3,
+   "rating": null,
+   "trails": "Green-dot roads and trails off Red Saddle and Ahtanum Meadows",
+   "trailNos": [],
+   "keywords": [
+    "Ahtanum",
+    "Red Saddle",
+    "Tree Phones"
+   ],
+   "notes": "DNR forest with green-dot roads open to ORVs and motorcycles. About 2.5 hours from Wenatchee.",
+   "pass": "Discover Pass + ORV tag",
+   "parking": [
+    {
+     "name": "Red Saddle Trailhead",
+     "lat": 46.51068,
+     "lon": -121.02082,
+     "src": "dnr",
+     "srcId": "Red Saddle Trailhead",
+     "road": "From Union Gap take Ahtanum Rd west to Tampico, then Middle Fork Rd (A-2000) about 9.5 miles.",
+     "url": "https://www.dnr.wa.gov/Ahtanum#red"
+    },
+    {
+     "name": "Ahtanum Meadows Campground",
+     "lat": 46.52008,
+     "lon": -121.01252,
+     "src": "dnr",
+     "srcId": "Ahtanum Meadows Campground",
+     "road": "6-site campground on Middle Fork Rd (A-2000).",
+     "url": "https://www.dnr.wa.gov/Ahtanum#ahtanummeadows"
+    }
+   ],
+   "links": [
+    [
+     "DNR Ahtanum page",
+     "https://www.dnr.wa.gov/Ahtanum"
+    ]
+   ]
+  },
+  {
+   "id": "reiter",
+   "name": "Reiter Foothills ORV Area",
+   "area": "Gold Bar, Hwy 2 (west side)",
+   "lat": 47.83087,
+   "lon": -121.60431,
+   "season": null,
+   "seasonNote": "Check the DNR page for hours and closures",
+   "diff": 3,
+   "rating": null,
+   "trails": "Motorized trail system on DNR land",
+   "trailNos": [],
+   "keywords": [
+    "Reiter"
+   ],
+   "notes": "Popular west-side ORV and motorcycle area. About 2 hours from Wenatchee over Stevens Pass.",
+   "pass": "Discover Pass + ORV tag",
+   "parking": [
+    {
+     "name": "Reiter Foothills Motorized P1",
+     "lat": 47.83087,
+     "lon": -121.60431,
+     "src": "dnr",
+     "srcId": "Reiter Foothills Motorized P1",
+     "road": "From Gold Bar east on Hwy 2, left on Reiter Rd, stay right at the fork after 1 mile, left after 3.2 miles onto Deer Flats Rd to the marked lots.",
+     "url": "https://www.dnr.wa.gov/ReiterWalkerValley"
+    },
+    {
+     "name": "Reiter Foothills Motorized P2",
+     "lat": 47.8255,
+     "lon": -121.6026,
+     "src": "dnr",
+     "srcId": "Reiter Foothills Motorized P2",
+     "road": "Second motorized lot on Deer Flats Rd.",
+     "url": "https://www.dnr.wa.gov/ReiterWalkerValley"
+    }
+   ],
+   "links": [
+    [
+     "DNR Reiter / Walker Valley page",
+     "https://www.dnr.wa.gov/ReiterWalkerValley"
+    ]
+   ]
+  },
+  {
+   "id": "walker-valley",
+   "name": "Walker Valley ORV Area",
+   "area": "East of Mount Vernon (west side)",
+   "lat": 48.3755,
+   "lon": -122.1696,
+   "season": null,
+   "seasonNote": "Check the DNR page for hours and closures",
+   "diff": 3,
+   "rating": null,
+   "trails": "Motorized trail system on DNR land",
+   "trailNos": [],
+   "keywords": [
+    "Walker Valley"
+   ],
+   "notes": "Large west-side ORV and motorcycle trail system. About 3.5 hours from Wenatchee.",
+   "pass": "Discover Pass + ORV tag",
+   "parking": [
+    {
+     "name": "Walker Valley ORV Trailhead",
+     "lat": 48.3755,
+     "lon": -122.1696,
+     "src": "dnr",
+     "srcId": "Walker Valley",
+     "road": "DNR official site.",
+     "url": "https://www.dnr.wa.gov/ReiterWalkerValley"
+    }
+   ],
+   "links": [
+    [
+     "DNR Reiter / Walker Valley page",
+     "https://www.dnr.wa.gov/ReiterWalkerValley"
+    ]
+   ]
+  },
+  {
+   "id": "elbe-hills",
+   "name": "Elbe Hills ORV Area",
+   "area": "Elbe, SR 706 (west side)",
+   "lat": 46.78271,
+   "lon": -122.08251,
+   "season": null,
+   "seasonNote": "Reservations required: call 360-825-1631",
+   "diff": 3,
+   "rating": null,
+   "trails": "13 miles of motorized trails",
+   "trailNos": [],
+   "keywords": [
+    "Elbe"
+   ],
+   "notes": "DNR ORV area near Mount Rainier. Reservations are required. About 3.5 hours from Wenatchee.",
+   "pass": "Discover Pass + ORV tag",
+   "parking": [
+    {
+     "name": "Elbe Hills ORV Trailhead",
+     "lat": 46.78271,
+     "lon": -122.08251,
+     "src": "dnr",
+     "srcId": "Elbe Hills ORV Trailhead",
+     "road": "From Elbe east on SR-706 about 6.1 miles, left on 278th Ave E, west on DNR 8 Rd for 2.5 miles to the 8/92 junction, left 0.1 mile.",
+     "url": "https://www.dnr.wa.gov/ElbeHillsTahoma#elbeorv"
+    }
+   ],
+   "links": [
+    [
+     "DNR Elbe Hills page",
+     "https://www.dnr.wa.gov/ElbeHillsTahoma"
+    ]
+   ]
   }
- ]
+ ],
+ "extraTrailNos": [
+  "1379"
+ ],
+ "cautionNos": {
+  "416": "Listed on a Forest Service trailhead page that says some trails here are closed to motorcycles. Check the Sawtooth Backcountry trail brochure.",
+  "417": "Listed on a Forest Service trailhead page that says some trails here are closed to motorcycles. Check the Sawtooth Backcountry trail brochure.",
+  "424": "Listed on a Forest Service trailhead page that says some trails here are closed to motorcycles. Check the Sawtooth Backcountry trail brochure.",
+  "429": "Listed on a Forest Service trailhead page that says some trails here are closed to motorcycles. Check the Sawtooth Backcountry trail brochure.",
+  "431": "Listed on a Forest Service trailhead page that says some trails here are closed to motorcycles. Check the Sawtooth Backcountry trail brochure."
+ }
 }

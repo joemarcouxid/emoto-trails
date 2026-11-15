@@ -12,7 +12,7 @@ Rules:
 import json, math, re, sys, time, urllib.parse, urllib.request, datetime as dt
 
 UA = {"User-Agent": "emoto-trails (github.com/joemarcouxid/emoto-trails)"}
-BBOX = (46.7, -121.4, 48.4, -119.1)  # S, W, N, E
+BBOX = (46.3, -122.3, 49.0, -119.0)  # S, W, N, E: central WA plus the big west-side ORV areas
 FS = "https://apps.fs.usda.gov/arcx/rest/services/EDW"
 DNR = "https://gis.dnr.wa.gov/site2/rest/services/Recreation/DNR_Recreation_Sites/MapServer/0"
 
@@ -59,7 +59,9 @@ def num(ref):
     return m.group(1) if m else None
 
 
-spots = json.load(open("spots.json"))["spots"]
+SPOTS_FILE = json.load(open("spots.json"))
+spots = SPOTS_FILE["spots"]
+CAUTION = SPOTS_FILE.get("cautionNos", {})
 today = dt.date.today()
 data = {"updated": today.isoformat(), "spots": {}, "sources": {}}
 for s in spots:
@@ -114,7 +116,7 @@ except Exception as e:
 # ---------------- 2. Forest Service trail routes ----------------
 # Trail numbers with confirmed motorcycle use: curated from Forest Service maps/brochures (spots.json),
 # plus numbers that OpenStreetMap tags as open to motorcycles.
-curated = {n for s in spots for n in s.get("trailNos", [])}
+curated = {n for s in spots for n in s.get("trailNos", [])} | set(SPOTS_FILE.get("extraTrailNos", []))
 from_osm = {f["properties"]["no"] for f in osm_feats if f["properties"].get("no")}
 fs_feats = []
 osm_pts = {}
@@ -131,7 +133,7 @@ try:
     for f in j.get("features", []):
         a = f["attributes"]
         n = a["trail_no"]
-        why = "Forest Service trail map or brochure" if n in curated else "OpenStreetMap motorcycle tag"
+        why = CAUTION.get(n) or ("Forest Service trail map, brochure or trailhead page" if n in curated else "OpenStreetMap motorcycle tag")
         if "WILDERNESS" in (a["trail_name"] or "").upper():
             continue  # motorcycles are never allowed in wilderness
         for path in f["geometry"]["paths"]:
@@ -149,6 +151,23 @@ try:
     data["sources"]["usfs_trails"] = f"ok, {len(fs_feats)} segments, {len({f['properties']['no'] for f in fs_feats})} trails"
 except Exception as e:
     data["sources"]["usfs_trails"] = f"failed: {e}"
+
+# Forest Service ATV/ORV routes that run on forest roads (road ids listed per spot)
+road_ids = sorted({r for s in spots for r in s.get("roadIds", [])})
+if road_ids:
+    try:
+        j = get(f"{FS}/EDW_RoadBasic_01/MapServer/0/query", {"where": "id IN (" + ",".join(f"'{r}'" for r in road_ids) + ")",
+                "outFields": "id,name", "returnGeometry": "true", "outSR": "4326", "geometryPrecision": "5", "f": "json"})
+        for f in j.get("features", []):
+            a = f["attributes"]
+            for path in f["geometry"]["paths"]:
+                if len(path) < 2: continue
+                fs_feats.append({"type": "Feature", "geometry": {"type": "LineString", "coordinates": thin([[round(x, 5), round(y, 5)] for x, y in path])},
+                                 "properties": {"src": "usfsroad", "name": f"FS Rd {a['id'][:4]}" + (f"-{a['id'][4:]}" if a['id'][4:] != "000" else "") + (f" ({a['name'].title()})" if a.get("name") else ""),
+                                                "no": a["id"], "why": "Forest Service ATV/ORV route", "hw": "track"}})
+        data["sources"]["usfs_orv_roads"] = f"ok, {len(j.get('features', []))} roads"
+    except Exception as e:
+        data["sources"]["usfs_orv_roads"] = f"failed: {e}"
 
 # Drop OSM ways that duplicate a Forest Service route (same trail number); the official route wins.
 fs_nos = {f["properties"]["no"] for f in fs_feats}
@@ -256,7 +275,7 @@ def fs_site(rid):
 
 
 def dnr_site(name):
-    j = get(f"{DNR}/query", {"where": f"UPPER(NAME)=UPPER('{name}')", "outFields": "NAME,SITE_STATUS",
+    j = get(f"{DNR}/query", {"where": f"UPPER(NAME) LIKE UPPER('{name}%')", "outFields": "NAME,SITE_STATUS",
                              "returnGeometry": "true", "outSR": "4326", "f": "json"})
     f = (j.get("features") or [None])[0]
     if not f:

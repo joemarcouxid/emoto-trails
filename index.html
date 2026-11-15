@@ -371,11 +371,11 @@ function initMap(){
   loadTrack();
 }
 const GD_COLOR="#2b8a3e";
-function trailKey(p){ return p.src==="usfs" ? "fs"+p.no : p.src==="greendot" ? "gd"+(p.name||"") : (p.name||p.ref||"osm"+p.id); }
-function trailTitle(p){ return p.src==="usfs" ? `${p.name} #${p.no}` : p.src==="greendot" ? (p.name?p.name+" (green dot)":"Green-dot road") : `${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}`; }
+function trailKey(p){ return p.src==="usfs"||p.src==="usfsroad" ? "fs"+p.no : p.src==="greendot" ? "gd"+(p.name||"") : (p.name||p.ref||"osm"+p.id); }
+function trailTitle(p){ return p.src==="usfsroad" ? p.name : p.src==="usfs" ? `${p.name} #${p.no}` : p.src==="greendot" ? (p.name?p.name+" (green dot)":"Green-dot road") : `${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}`; }
 function baseStyle(f){ const p=f.properties, track=p.hw==="track";
   if(p.src==="greendot") return {color:GD_COLOR, weight:3.5, opacity:.9, dashArray:p.seasonal?"8 5":null};
-  return {color:p.src==="usfs"?TRAIL_COLOR:OSM_COLOR, weight:track?3:3.5, opacity:.9, dashArray:track?"6 5":null}; }
+  return {color:p.src==="usfs"||p.src==="usfsroad"?TRAIL_COLOR:OSM_COLOR, weight:track?3:3.5, opacity:.9, dashArray:track?"6 5":null}; }
 async function loadTrails(){
   if(trailsGeo) return;
   try{
@@ -386,8 +386,8 @@ async function loadTrails(){
         const p=f.properties;
         const body=p.src==="greendot"
           ? `Green-dot road – open to ORVs (DNR / WDFW)${p.seasonal?"<br><b>Seasonal:</b> closed Mar 1 – Apr 15 in Naneum/Colockum (check the map legend for other areas)":""}`
-          : p.src==="usfs"
-          ? `Official Forest Service route<br>Motorcycles allowed per: ${esc(p.why)}`
+          : p.src==="usfs"||p.src==="usfsroad"
+          ? `Official Forest Service ${p.src==="usfsroad"?"road":"route"}<br>Motorcycles allowed per: ${esc(p.why)}`
           : `${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+esc(p.surface):""}<br>Motorcycles: ${esc(p.moto||"see signs")} (OpenStreetMap)`;
         l.bindPopup(()=>`<b>${esc(trailTitle(p))}</b><br>${body}<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(trailTitle(p)).replace(/'/g,"&#39;")}')">➜ Route here</button>`);
       }}).addTo(map);
