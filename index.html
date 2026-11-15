@@ -103,7 +103,7 @@
   button.rt{margin-top:6px;border:none;background:#0a84ff;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
   /* layout: keep panels clear of the zoom buttons and the Where am I button */
   #trailPanel,#routePanel{left:54px!important;right:56px!important}
-  #locBtn{top:62px!important;bottom:auto!important;right:10px!important}
+  #locBtn{top:62px!important;bottom:auto!important;right:10px!important;width:44px;height:44px;padding:0!important;font-size:20px!important;border-radius:50%!important}
   #gpsPanel{right:10px!important;bottom:52px!important}
   #mapInfo{right:10px!important}
   footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
@@ -149,7 +149,7 @@
   <div id="routePanel"></div>
   <div id="gpsPanel"></div>
   <div id="mapInfo">Loading trails…</div>
-  <button id="locBtn" class="mapbtn" title="Show where I am and follow me">📍 Where am I</button>
+  <button id="locBtn" class="mapbtn" title="Where am I? Show and follow my location" aria-label="Where am I">📍</button>
 </div>
 <footer>Weather: Open-Meteo · Trails: USDA Forest Service, © OpenStreetMap contributors · Parking: Forest Service, WA DNR · Snow: NRCS SNOTEL · Status can change fast. Check the official link before you drive.</footer>
 
