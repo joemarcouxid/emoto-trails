@@ -1,0 +1,309 @@
+{
+ "updated": "2026-11-15",
+ "spots": {
+  "devils-gulch": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Devils Gulch ORV Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.39551,
+     "lon": -120.50062,
+     "status": "none"
+    }
+   ],
+   "snow": {
+    "station": "Grouse Camp",
+    "elevFt": 5390,
+    "miles": 7.9,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
+  "beehive": {
+   "signals": [
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Beehive: Beehive Area Off-Road Motorized Restriction on the Wenatchee River Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/beehive-area-road-motorized-restriction-wenatchee-river-ranger",
+     "src": "Forest Service alerts"
+    }
+   ],
+   "parking": [
+    {
+     "name": "Beehive ORV Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.32491,
+     "lon": -120.40201,
+     "status": "none"
+    },
+    {
+     "name": "Upper Devils Gulch ORV Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.32771,
+     "lon": -120.40681,
+     "status": "none"
+    }
+   ],
+   "snow": {
+    "station": "Upper Wheeler",
+    "elevFt": 4330,
+    "miles": 3.0,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
+  "mission-ridge": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Mission Ridge Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.30501,
+     "lon": -120.43601,
+     "status": "none"
+    }
+   ],
+   "snow": {
+    "station": "Grouse Camp",
+    "elevFt": 5390,
+    "miles": 2.9,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
+  "tronsen": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Upper Tronsen Ridge ORV Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.33383,
+     "lon": -120.52675,
+     "status": "none"
+    },
+    {
+     "name": "Tronsen Ridge ORV Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.32794,
+     "lon": -120.5517,
+     "status": "none"
+    },
+    {
+     "name": "Ruby Creek ORV Trailhead (north end)",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.40994,
+     "lon": -120.60412,
+     "status": "none"
+    }
+   ],
+   "snow": {
+    "station": "Grouse Camp",
+    "elevFt": 5390,
+    "miles": 4.1,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
+  "mad-river": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Mad River Trailhead - Lower",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.75895,
+     "lon": -120.42654,
+     "status": "none"
+    },
+    {
+     "name": "Mad River Trailhead - Upper",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.84081,
+     "lon": -120.60412,
+     "status": "none"
+    }
+   ],
+   "snow": null
+  },
+  "chiwawa": {
+   "signals": [
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Chiwawa: Storm Damaged Roads Closure on Wenatchee River District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/storm-damaged-roads-closure-wenatchee-river-district",
+     "src": "Forest Service alerts"
+    }
+   ],
+   "parking": [
+    {
+     "name": "Chikamin ORV Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.91666,
+     "lon": -120.71771,
+     "status": "none"
+    },
+    {
+     "name": "Alder Ridge ORV Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.85121,
+     "lon": -120.66101,
+     "status": "none"
+    },
+    {
+     "name": "Chikamin Tie ORV Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.98051,
+     "lon": -120.70201,
+     "status": "none"
+    }
+   ],
+   "snow": null
+  },
+  "naneum": {
+   "signals": [],
+   "parking": [],
+   "snow": {
+    "station": "Trough",
+    "elevFt": 5480,
+    "miles": 5.5,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
+  "taneum": {
+   "signals": [
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Manastash: Manastash Area Closure on the Cle Elum Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/manastash-area-closure-cle-elum-ranger-district",
+     "src": "Forest Service alerts"
+    }
+   ],
+   "parking": [
+    {
+     "name": "South Fork Meadow Trailhead",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.09514,
+     "lon": -120.98704,
+     "status": "none"
+    },
+    {
+     "name": "Manastash Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.02489,
+     "lon": -120.93795,
+     "status": "none"
+    }
+   ],
+   "snow": null
+  },
+  "little-naches": {
+   "signals": [
+    {
+     "level": "closed",
+     "text": "Longmire Meadow OHV staging is marked closed by the Forest Service.",
+     "url": "https://www.fs.usda.gov/recarea/okawen/recarea/?recid=58361",
+     "src": "official site status"
+    },
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Naches Ranger District: Indian Creek Road and Trail Motorized Use Closure on the Naches Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/indian-creek-road-and-trail-motorized-use-closure-naches-ranger",
+     "src": "Forest Service alerts"
+    },
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Naches Ranger District: Wildcat Road Motorized Vehicle Closure on Naches Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/wildcat-road-motorized-vehicle-closure-naches-ranger-district",
+     "src": "Forest Service alerts"
+    },
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Naches Ranger District: Little Rattlesnake 4WD Trail Vehicle Use Restrictions on the Naches Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/little-rattlesnake-4wd-trail-vehicle-use-restrictions-naches-ranger",
+     "src": "Forest Service alerts"
+    },
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Naches Ranger District: Norse Peak and Clearwater Wilderness Use Restrictions on the Naches Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/norse-peak-and-clearwater-wilderness-use-restrictions-naches-ranger",
+     "src": "Forest Service alerts"
+    },
+    {
+     "level": "warn",
+     "text": "Forest Service alert mentions Naches Ranger District: South Fork Tieton Road Speed Limit on the Naches Ranger District",
+     "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/south-fork-tieton-road-speed-limit-naches-ranger-district",
+     "src": "Forest Service alerts"
+    }
+   ],
+   "parking": [
+    {
+     "name": "Longmire Meadow OHV staging",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.02738,
+     "lon": -121.15316,
+     "status": "closed"
+    },
+    {
+     "name": "Kaner Flat Campground",
+     "check": "ok",
+     "movedM": 1,
+     "lat": 47.01101,
+     "lon": -121.13001,
+     "status": "open"
+    }
+   ],
+   "snow": null
+  },
+  "moses-dunes": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Dune entrance, Sand Dune Rd",
+     "check": "multi-source"
+    }
+   ],
+   "snow": null
+  },
+  "beverly": {
+   "signals": [
+    {
+     "level": "warn",
+     "text": "The DNR record for Beverly Dunes ORV Area (DNR) wasn't found in today's check.",
+     "url": null,
+     "src": "parking check"
+    }
+   ],
+   "parking": [
+    {
+     "name": "Beverly Dunes ORV Area (DNR)",
+     "check": "missing"
+    }
+   ],
+   "snow": null
+  }
+ },
+ "sources": {
+  "osm": "ok, 138 segments",
+  "usfs_trails": "ok, 67 segments, 49 trails",
+  "parking": "ok",
+  "fires": "ok",
+  "usfs_alerts": "ok, 69 alerts scanned",
+  "snotel": "ok, 9 spots near a station, 3 readings"
+ }
+}
