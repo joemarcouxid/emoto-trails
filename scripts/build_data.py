@@ -117,6 +117,11 @@ except Exception as e:
 curated = {n for s in spots for n in s.get("trailNos", [])}
 from_osm = {f["properties"]["no"] for f in osm_feats if f["properties"].get("no")}
 fs_feats = []
+osm_pts = {}
+for f in osm_feats:
+    n = f["properties"].get("no")
+    if n:
+        osm_pts.setdefault(n, []).extend(f["geometry"]["coordinates"])
 try:
     nos = sorted(curated | from_osm)
     j = get(f"{FS}/EDW_TrailNFSPublish_01/MapServer/0/query", {
@@ -127,9 +132,16 @@ try:
         a = f["attributes"]
         n = a["trail_no"]
         why = "Forest Service trail map or brochure" if n in curated else "OpenStreetMap motorcycle tag"
+        if "WILDERNESS" in (a["trail_name"] or "").upper():
+            continue  # motorcycles are never allowed in wilderness
         for path in f["geometry"]["paths"]:
             if len(path) < 2:
                 continue
+            if n not in curated:
+                # Only keep the part of the official route that OpenStreetMap actually tags for motorcycles
+                mid = path[len(path) // 2]
+                if not osm_pts.get(n) or min(meters(mid, q) for q in osm_pts[n]) > 300:
+                    continue
             fs_feats.append({"type": "Feature",
                              "geometry": {"type": "LineString", "coordinates": thin([[round(x, 5), round(y, 5)] for x, y in path])},
                              "properties": {"src": "usfs", "name": (a["trail_name"] or "").title(), "no": n,
@@ -157,7 +169,7 @@ def fs_site(rid):
 
 
 def dnr_site(name):
-    j = get(f"{DNR}/query", {"where": f"UPPER(SITE_NAME)=UPPER('{name}')", "outFields": "SITE_NAME,SITE_STATUS",
+    j = get(f"{DNR}/query", {"where": f"UPPER(NAME)=UPPER('{name}')", "outFields": "NAME,SITE_STATUS",
                              "returnGeometry": "true", "outSR": "4326", "f": "json"})
     f = (j.get("features") or [None])[0]
     if not f:
