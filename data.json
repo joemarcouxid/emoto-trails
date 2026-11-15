@@ -32,26 +32,26 @@
    ],
    "parking": [
     {
-     "name": "Beehive ORV Trailhead",
-     "check": "ok",
-     "movedM": 0,
-     "lat": 47.32491,
-     "lon": -120.40201,
-     "status": "none"
-    },
-    {
      "name": "Upper Devils Gulch ORV Trailhead",
      "check": "ok",
      "movedM": 1,
      "lat": 47.32771,
      "lon": -120.40681,
      "status": "none"
+    },
+    {
+     "name": "Beehive ORV Trailhead",
+     "check": "ok",
+     "movedM": 0,
+     "lat": 47.32491,
+     "lon": -120.40201,
+     "status": "none"
     }
    ],
    "snow": {
     "station": "Upper Wheeler",
     "elevFt": 4330,
-    "miles": 3.0,
+    "miles": 3.3,
     "depthIn": 0,
     "date": "2026-11-14"
    }
@@ -171,6 +171,26 @@
    ],
    "snow": null
   },
+  "stemilt": {
+   "signals": [],
+   "parking": [
+    {
+     "name": "Clear Lake Sno-Park",
+     "check": "official"
+    },
+    {
+     "name": "Lily Lake Sno-Park",
+     "check": "official"
+    }
+   ],
+   "snow": {
+    "station": "Upper Wheeler",
+    "elevFt": 4330,
+    "miles": 4.0,
+    "depthIn": 0,
+    "date": "2026-11-14"
+   }
+  },
   "naneum": {
    "signals": [],
    "parking": [],
@@ -266,12 +286,13 @@
   }
  },
  "sources": {
-  "osm": "ok, 85 segments",
-  "usfs_trails": "ok, 57 segments, 42 trails",
-  "branches": "ok, 1041 segments",
+  "osm": "ok, 138 segments",
+  "usfs_trails": "ok, 58 segments, 41 trails",
+  "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
+  "branches": "ok, 1040 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 69 alerts scanned",
-  "snotel": "ok, 9 spots near a station, 3 readings"
+  "snotel": "ok, 10 spots near a station, 3 readings"
  }
 }
