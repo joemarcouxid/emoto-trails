@@ -24,8 +24,8 @@
   "beehive": {
    "signals": [
     {
-     "level": "warn",
-     "text": "Forest Service alert mentions Beehive: Beehive Area Off-Road Motorized Restriction on the Wenatchee River Ranger District",
+     "level": "info",
+     "text": "Standing rule since 1995: Beehive Area Off-Road Motorized Restriction on the Wenatchee River Ranger District",
      "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/beehive-area-road-motorized-restriction-wenatchee-river-ranger",
      "src": "Forest Service alerts"
     }
@@ -138,7 +138,7 @@
    "signals": [
     {
      "level": "warn",
-     "text": "Forest Service alert mentions Chiwawa: Storm Damaged Roads Closure on Wenatchee River District",
+     "text": "Forest Service alert mentions Chiwawa: Storm Damaged Roads Closure on Wenatchee River District (since May 20, 2026)",
      "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/storm-damaged-roads-closure-wenatchee-river-district",
      "src": "Forest Service alerts"
     }
@@ -185,8 +185,8 @@
   "taneum": {
    "signals": [
     {
-     "level": "warn",
-     "text": "Forest Service alert mentions Manastash: Manastash Area Closure on the Cle Elum Ranger District",
+     "level": "info",
+     "text": "Standing rule since 1995: Manastash Area Closure on the Cle Elum Ranger District",
      "url": "https://www.fs.usda.gov/r06/okanogan-wenatchee/alerts/manastash-area-closure-cle-elum-ranger-district",
      "src": "Forest Service alerts"
     }
