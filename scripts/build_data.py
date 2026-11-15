@@ -153,9 +153,58 @@ except Exception as e:
 # Drop OSM ways that duplicate a Forest Service route (same trail number); the official route wins.
 fs_nos = {f["properties"]["no"] for f in fs_feats}
 osm_keep = [f for f in osm_feats if f["properties"].get("no") not in fs_nos]
-json.dump({"type": "FeatureCollection", "updated": today.isoformat(), "features": fs_feats + osm_keep},
+confirmed = fs_feats + osm_keep
+
+# Tag each confirmed trail with the spots it belongs to (trail number listed for the spot, or within 8 km of its parking)
+def spot_points(s):
+    return [(p["lon"], p["lat"]) for p in s.get("parking", [])] or [(s["lon"], s["lat"])]
+for f in confirmed:
+    pr = f["properties"]; cs = f["geometry"]["coordinates"]; mid = cs[len(cs) // 2]
+    ids = [s["id"] for s in spots if (pr.get("no") and pr["no"] in s.get("trailNos", []))
+           or min(meters(mid, q) for q in spot_points(s)) <= 8000]
+    if ids: pr["spots"] = ids
+    pr["len"] = round(sum(meters(cs[i], cs[i + 1]) for i in range(len(cs) - 1)) / 1609.34, 2)
+
+json.dump({"type": "FeatureCollection", "updated": today.isoformat(), "features": confirmed},
           open("trails.geojson", "w"), separators=(",", ":"))
 log(f"trails: {len(fs_feats)} usfs + {len(osm_keep)} osm")
+
+# ---------------- 2b. Branch trails near each spot (motorcycle use NOT confirmed) ----------------
+# Shown in gray so riders can see where trails split, without the app suggesting they're legal.
+ctx = []
+conf_osm_ids = {f["properties"].get("id") for f in osm_feats}
+try:
+    around = "".join(f'way["highway"~"^(path|track|footway|bridleway)$"](around:6000,{lat},{lon});'
+                     for s in spots if s.get("trailNos") for lon, lat in spot_points(s))
+    q = f"[out:json][timeout:180];({around});out tags geom;"
+    j = None
+    for srv in ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
+                "https://overpass.private.coffee/api/interpreter"]:
+        try:
+            j = get(srv, data={"data": q}, timeout=240, tries=2); break
+        except Exception as e:
+            log("overpass (branches) failed", srv, e)
+    if j is None: raise RuntimeError("all overpass servers failed")
+    seen = set()
+    for el in j["elements"]:
+        if el["id"] in conf_osm_ids or el["id"] in seen: continue
+        seen.add(el["id"])
+        g = el.get("geometry") or []
+        if len(g) < 2: continue
+        t = el.get("tags", {})
+        no = num(t.get("ref") or t.get("name"))
+        if no and no in fs_nos: continue  # already drawn as a confirmed Forest Service route
+        if t.get("motorcycle") in ("yes", "designated", "permissive"): continue
+        props = {"src": "osm", "id": el["id"], "name": t.get("name"), "ref": t.get("ref"), "hw": t.get("highway"),
+                 "moto": t.get("motorcycle"), "access": t.get("access"), "old": t.get("old_name")}
+        ctx.append({"type": "Feature", "geometry": {"type": "LineString", "coordinates": thin([[round(p["lon"], 5), round(p["lat"], 5)] for p in g], 15)},
+                    "properties": {k: v for k, v in props.items() if v}})
+    json.dump({"type": "FeatureCollection", "updated": today.isoformat(), "features": ctx},
+              open("branches.geojson", "w"), separators=(",", ":"))
+    data["sources"]["branches"] = f"ok, {len(ctx)} segments"
+except Exception as e:
+    data["sources"]["branches"] = f"failed, kept last copy: {e}"
+
 
 
 # ---------------- 3. Parking checks + official site status ----------------

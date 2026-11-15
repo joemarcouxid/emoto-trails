@@ -74,6 +74,33 @@
   .park small a{color:#2f5fb3}
   .ok{color:var(--open)} .bad{color:var(--closed)}
   ul.sigs{margin:4px 0 6px 18px;padding:0} ul.sigs li{margin:3px 0} ul.sigs li.closed{color:var(--closed)} ul.sigs li.warn{color:var(--warn)} ul.sigs li.info{color:var(--muted)}
+  .tbtn{background:#c2410c;color:#fff;border:none;border-radius:6px;font-size:14px;width:30px;height:26px;margin-left:6px;vertical-align:middle;cursor:pointer}
+  #trailPanel{display:none;position:absolute;z-index:600;left:10px;right:60px;top:10px;max-height:42%;overflow:auto;background:#fffffff5;border-radius:12px;padding:8px 10px;box-shadow:0 2px 8px #0004;font-size:13.5px}
+  #trailPanel.show{display:block}
+  .tp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+  .tp-head .x{border:none;background:none;font-size:18px;cursor:pointer}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:1px solid #e8c6b5;background:#fff4ee;color:#7a2a07;border-radius:999px;padding:5px 10px;font-size:13px;cursor:pointer}
+  .chip small{color:#9a5a3a}
+  .tp-foot{margin-top:8px} .sv{border:none;background:#2f5fb3;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+  #gpsPanel{display:none;position:absolute;z-index:600;left:10px;right:90px;bottom:58px;background:#fffffff5;border-radius:12px;padding:8px 10px;box-shadow:0 2px 8px #0004;font-size:14px;line-height:1.4}
+  #gpsPanel.show{display:block} #gpsPanel .ok{color:var(--open);font-weight:600} #gpsPanel .bad{color:var(--closed);font-weight:600}
+  #gpsPanel a{color:#2f5fb3}
+  .gps-foot{margin-top:4px} .gps-foot button{border:1px solid #ccc;background:#fff;border-radius:6px;font-size:12px;padding:3px 7px;margin-left:4px}
+  #mapInfo{bottom:8px!important;right:90px!important;font-size:11.5px!important;padding:5px 8px!important}
+  #locBtn{bottom:60px!important;font-size:17px!important;padding:11px 14px!important}
+  .lg{display:inline-block;width:16px;height:4px;border-radius:2px;vertical-align:middle;margin:0 3px 0 6px}
+  .lg.gray{background:repeating-linear-gradient(90deg,#5f6368 0 3px,transparent 3px 7px)}
+  .trail-label{background:#fffffff0;border:1px solid #c2410c;color:#7a2a07;font-weight:650;font-size:12px;padding:1px 6px;border-radius:6px;box-shadow:none}
+  .trail-label:before{display:none}
+  .me-dot{position:relative}
+  .me-arrow{position:absolute;left:50%;top:50%;width:0;height:0;margin:-19px 0 0 -6px;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid #2f7bf6;transform-origin:6px 19px}
+  #whereBtn{background:#0a84ff;border-color:#0a84ff;font-weight:650}
+  #routePanel{display:none;position:absolute;z-index:650;left:10px;right:60px;top:10px;max-height:45%;overflow:auto;background:#fffffff7;border-radius:12px;padding:8px 10px;box-shadow:0 2px 8px #0004;font-size:13.5px;border-left:5px solid #0a84ff}
+  #routePanel.show{display:block} body:has(#routePanel.show) #trailPanel{display:none}
+  #routePanel .bad, ol.legs li.bad{color:var(--closed)}
+  ol.legs{margin:6px 0 0 18px;padding:0} ol.legs li{margin:2px 0}
+  button.rt{margin-top:6px;border:none;background:#0a84ff;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
   footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
 </style>
 </head>
@@ -81,7 +108,7 @@
 <header>
   <h1>E-Moto Ride Finder</h1>
   <div class="sub" id="where">Finding your location…</div>
-  <div class="tabs"><button id="tabList" class="on">List</button><button id="tabMap">Map</button></div>
+  <div class="tabs"><button id="tabList" class="on">List</button><button id="tabMap">Map</button><button id="whereBtn" onclick="whereAmI()">📍 Where am I</button></div>
   <div class="bar listonly">
     <select id="sort" aria-label="Sort by">
       <option value="dist">Closest first</option>
@@ -112,8 +139,11 @@
 </main>
 <div id="mapView">
   <div id="map"></div>
+  <div id="trailPanel"></div>
+  <div id="routePanel"></div>
+  <div id="gpsPanel"></div>
   <div id="mapInfo">Loading trails…</div>
-  <button id="locBtn" class="mapbtn" title="Show and follow my location">◎ Me</button>
+  <button id="locBtn" class="mapbtn" title="Show where I am and follow me">📍 Where am I</button>
 </div>
 <footer>Weather: Open-Meteo · Trails: USDA Forest Service, © OpenStreetMap contributors · Parking: Forest Service, WA DNR · Snow: NRCS SNOTEL · Status can change fast. Check the official link before you drive.</footer>
 
@@ -254,7 +284,7 @@ function render(){
     const sigs = (sd.signals||[]).map(x=>`<li class="${x.level}">${esc(x.text)}${x.url?` <a href="${x.url}" target="_blank" rel="noopener">↗</a>`:""}</li>`).join("");
     return `<div class="card">
       <div class="top">
-        <div><div class="name">${esc(s.name)}<button class="pbtn" title="Parking" aria-label="Where to park" onclick="togglePark('${s.id}')">P</button></div><div class="area">${esc(s.area)}</div></div>
+        <div><div class="name">${esc(s.name)}<button class="pbtn" title="Parking" aria-label="Where to park" onclick="togglePark('${s.id}')">P</button><button class="tbtn" title="Show trails on topo map" aria-label="Show trails on map" onclick="focusSpot('${s.id}')">🗺</button></div><div class="area">${esc(s.area)}</div></div>
         <div class="dist">${d.toFixed(0)} mi<small>straight line</small></div>
       </div>
       <div class="pills">
@@ -299,7 +329,9 @@ function locate(){
 }
 
 // ---------- Topo map ----------
-let map=null, meMarker=null, meCircle=null, follow=false, watchId=null, trailsLoaded=false, pinLayer=null;
+let map=null, meMarker=null, meCircle=null, follow=false, watchId=null, pinLayer=null;
+let tap={lat:0,lng:0}, trailsGeo=null, trailLayer=null, branchLayer=null, labelLayer=null, trackLine=null, focusId=null, lastFix=null;
+const TRAIL_COLOR="#c2410c", OSM_COLOR="#f08c00";
 function setHeaderVar(){ document.documentElement.style.setProperty("--hdr", document.querySelector("header").offsetHeight+"px"); }
 function openTab(which){
   const isMap=which==="map";
@@ -315,63 +347,325 @@ function drawPins(){
   SPOTS.forEach(s=>{
     const st=statusOf(s);
     parkingOf(s).forEach(p=>{
-      L.marker([p.lat,p.lon],{icon:L.divIcon({className:"",html:'<div class="p-pin">P</div>',iconSize:[24,24],iconAnchor:[12,12]})})
+      L.marker([p.lat,p.lon],{icon:L.divIcon({className:"",html:'<div class="p-pin">P</div>',iconSize:[24,24],iconAnchor:[12,12]}),zIndexOffset:500})
        .addTo(pinLayer).bindPopup(`<b>${esc(p.name)}</b><br>${esc(s.name)} · ${st.text}${weather[s.id]?" · "+weather[s.id].cond:""}<br>${esc(p.road||"")}<br><small>${SRC_WORDS[p.src]||""}</small><br>
-         <a href="${gLink(p)}" target="_blank">Google Maps</a> · <a href="${aLink(p)}" target="_blank">Apple Maps</a>`);
+         <a href="${gLink(p)}" target="_blank">Google Maps</a> · <a href="${aLink(p)}" target="_blank">Apple Maps</a> · <a href="#" onclick="focusSpot('${s.id}');return false">Show trails</a>`);
     });
   });
 }
 function initMap(){
   if(map) return;
   const here=me||HOME;
-  map=L.map("map").setView([here.lat,here.lon],10);
-  const usgs=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:17,maxNativeZoom:16,attribution:"USGS The National Map"});
-  const otm=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenTopoMap (CC-BY-SA), © OpenStreetMap"});
-  const sat=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:17,maxNativeZoom:16,attribution:"USGS The National Map"});
+  map=L.map("map",{zoomControl:true}).setView([here.lat,here.lon],10);
+  const usgs=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,maxNativeZoom:16,attribution:"USGS The National Map"});
+  const otm=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:18,maxNativeZoom:17,attribution:"© OpenTopoMap (CC-BY-SA), © OpenStreetMap"});
+  const sat=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,maxNativeZoom:16,attribution:"USGS The National Map"});
   usgs.addTo(map);
-  L.control.layers({"USGS Topo":usgs,"OpenTopoMap":otm,"Satellite + topo":sat},null,{position:"topright"}).addTo(map);
-  L.control.scale({imperial:true,metric:false}).addTo(map);
+  L.control.layers({"USGS Topo (works offline)":usgs,"OpenTopoMap":otm,"Satellite + topo":sat},null,{position:"topright"}).addTo(map);
+  L.control.scale({imperial:true,metric:false,position:"topleft"}).addTo(map);
   drawPins();
   map.on("dragstart",()=>{ if(follow){ follow=false; $("#locBtn").classList.remove("follow"); } });
+  map.on("zoomend",()=>{ if(branchLayer){ map.getZoom()>=12?branchLayer.addTo(map):branchLayer.remove(); } });
   loadTrails();
+  loadTrack();
 }
+function trailKey(p){ return p.src==="usfs" ? "fs"+p.no : (p.name||p.ref||"osm"+p.id); }
+function trailTitle(p){ return p.src==="usfs" ? `${p.name} #${p.no}` : `${p.name||"Unnamed trail"}${p.ref?" #"+p.ref:""}`; }
+function baseStyle(f){ const p=f.properties, track=p.hw==="track";
+  return {color:p.src==="usfs"?TRAIL_COLOR:OSM_COLOR, weight:track?3:3.5, opacity:.9, dashArray:track?"6 5":null}; }
 async function loadTrails(){
-  if(trailsLoaded) return;
+  if(trailsGeo) return;
   try{
-    const g=await loadJSON("trails.geojson");
-    L.geoJSON(g,{
-      style:f=>{const p=f.properties, track=p.hw==="track";
-        return {color:p.src==="usfs"?"#c2410c":"#f08c00",weight:track?3:3.5,opacity:.9,dashArray:track?"6 5":null};},
+    trailsGeo=await loadJSON("trails.geojson");
+    trailLayer=L.geoJSON(trailsGeo,{style:baseStyle,
       onEachFeature:(f,l)=>{
+        l.on("click",e=>{ tap=e.latlng; highlightTrail(trailKey(f.properties),false); });
         const p=f.properties;
-        const title=p.src==="usfs" ? `${esc(p.name)} #${esc(p.no)}` : `${esc(p.name||"Unnamed trail")}${p.ref?" #"+esc(p.ref):""}`;
         const body=p.src==="usfs"
-          ? `Official Forest Service route · ${p.miles} mi<br>Motorcycles allowed per: ${esc(p.why)}`
-          : `${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+esc(p.surface):""}<br>Motorcycles: ${esc(p.moto||"see signs")} (OpenStreetMap)<br><a href="https://www.openstreetmap.org/way/${p.id}" target="_blank">OpenStreetMap ↗</a>`;
-        l.bindPopup(`<b>${title}</b><br>${body}`);
-      }
-    }).addTo(map);
-    trailsLoaded=true;
-    const n=g.features.length;
-    $("#mapInfo").innerHTML=`<b style="color:#c2410c">━</b> Forest Service route <b style="color:#f08c00">━</b> OpenStreetMap trail <b style="color:#f08c00">┅</b> dirt road · <b style="color:#2f5fb3">P</b> verified parking · ${n} trail pieces · ${g.updated||""}. Always check the signs.`;
-  }catch(e){
-    $("#mapInfo").textContent="Trail lines didn't load. The topo map still shows trails as thin dashed lines.";
-  }
+          ? `Official Forest Service route<br>Motorcycles allowed per: ${esc(p.why)}`
+          : `${p.hw==="track"?"Dirt road / track":"Single track / path"}${p.surface?" · "+esc(p.surface):""}<br>Motorcycles: ${esc(p.moto||"see signs")} (OpenStreetMap)`;
+        l.bindPopup(()=>`<b>${esc(trailTitle(p))}</b><br>${body}<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(trailTitle(p)).replace(/'/g,"&#39;")}')">➜ Route here</button>`);
+      }}).addTo(map);
+    labelLayer=L.layerGroup().addTo(map);
+    $("#mapInfo").innerHTML=`<span class="lg" style="background:${TRAIL_COLOR}"></span>Motorcycle trail (Forest Service) <span class="lg" style="background:${OSM_COLOR}"></span>Motorcycle trail (OpenStreetMap) <span class="lg gray"></span>Branch trail – motorcycles not confirmed <b style="color:#2f5fb3">P</b> parking`;
+    if(focusId) focusSpot(focusId);
+  }catch(e){ $("#mapInfo").textContent="Trail lines didn't load. The topo map still shows trails as thin dashed lines."; }
+  try{
+    const b=await loadJSON("branches.geojson"); branchesGeo=b; graph=null;
+    branchLayer=L.geoJSON(b,{style:{color:"#5f6368",weight:2.5,opacity:.8,dashArray:"3 6"},
+      onEachFeature:(f,l)=>{ const p=f.properties;
+        l.on("click",e=>{ tap=e.latlng; });
+        l.bindPopup(()=>`<b>${esc(p.name||"Unnamed trail")}${p.ref?" ("+esc(p.ref)+")":""}</b><br>Branch trail. <b>Motorcycle use not confirmed</b> by the Forest Service or OpenStreetMap.${p.old?"<br>Formerly "+esc(p.old)+".":""}<br>Check the signs before riding it.<br><button class="rt" onclick="routeTo(${tap.lat},${tap.lng},'${esc(p.name||"this branch").replace(/'/g,"&#39;")}')">➜ Route here</button>`); }});
+    if(map.getZoom()>=12) branchLayer.addTo(map);
+    if(trailLayer) trailLayer.bringToFront();
+  }catch(e){}
 }
+function featuresFor(test){ return trailsGeo ? trailsGeo.features.filter(test) : []; }
+function boundsOf(feats, extra=[]){
+  const b=L.latLngBounds([]);
+  feats.forEach(f=>f.geometry.coordinates.forEach(c=>b.extend([c[1],c[0]])));
+  extra.forEach(p=>b.extend([p.lat,p.lon]));
+  return b;
+}
+function labelTrails(feats){
+  labelLayer.clearLayers();
+  const byKey={};
+  feats.forEach(f=>{ const k=trailKey(f.properties); (byKey[k]=byKey[k]||[]).push(f); });
+  Object.values(byKey).forEach(fs=>{
+    const longest=fs.reduce((a,b)=>b.geometry.coordinates.length>a.geometry.coordinates.length?b:a);
+    const cs=longest.geometry.coordinates, m=cs[Math.floor(cs.length/2)];
+    L.tooltip({permanent:true,direction:"center",className:"trail-label",interactive:false})
+      .setContent(esc(trailTitle(longest.properties))).setLatLng([m[1],m[0]]).addTo(labelLayer);
+  });
+}
+function restyle(isOn){
+  trailLayer.eachLayer(l=>{
+    const on=isOn(l.feature);
+    l.setStyle(on?{...baseStyle(l.feature),weight:7,opacity:1}:{...baseStyle(l.feature),opacity:.35});
+    if(on) l.bringToFront();
+  });
+}
+function focusSpot(id){
+  focusId=id;
+  if(!document.body.classList.contains("map")) openTab("map");
+  if(!trailsGeo) return;  // runs again once trails load
+  const s=SPOTS.find(x=>x.id===id); if(!s) return;
+  const feats=featuresFor(f=>(f.properties.spots||[]).includes(id));
+  restyle(f=>(f.properties.spots||[]).includes(id));
+  labelTrails(feats);
+  const b=boundsOf(feats, parkingOf(s));
+  if(b.isValid()) map.fitBounds(b,{padding:[30,30],maxZoom:15}); else map.setView([s.lat,s.lon],13);
+  // trail list
+  const byKey={};
+  feats.forEach(f=>{ const k=trailKey(f.properties); byKey[k]=byKey[k]||{t:trailTitle(f.properties),mi:0}; byKey[k].mi+=f.properties.len||0; });
+  const chips=Object.entries(byKey).sort((a,b)=>b[1].mi-a[1].mi)
+    .map(([k,v])=>`<button class="chip" onclick="highlightTrail('${k.replace(/'/g,"\\'")}')">${esc(v.t)} <small>${v.mi.toFixed(1)} mi</small></button>`).join("");
+  $("#trailPanel").innerHTML=`<div class="tp-head"><b>${esc(s.name)}</b><button class="x" onclick="clearFocus()">✕</button></div>
+    <div class="chips">${chips||"<small>No mapped motorcycle trails yet for this spot.</small>"}</div>
+    <div class="tp-foot"><button class="sv" onclick="saveOffline('${id}')">⬇ Save this area for offline</button> <small id="saveMsg">${offlineSaved(id)?"Saved for offline ✓":""}</small></div>`;
+  $("#trailPanel").classList.add("show");
+}
+function highlightTrail(key,fit=true){
+  const feats=featuresFor(f=>trailKey(f.properties)===key);
+  if(!feats.length) return;
+  restyle(f=>trailKey(f.properties)===key);
+  labelTrails(feats);
+  const b=boundsOf(feats); if(fit && b.isValid()) map.fitBounds(b,{padding:[40,40],maxZoom:16});
+}
+function clearFocus(){
+  focusId=null; $("#trailPanel").classList.remove("show");
+  if(trailLayer) trailLayer.eachLayer(l=>l.setStyle(baseStyle(l.feature)));
+  if(labelLayer) labelLayer.clearLayers();
+}
+
+// ---------- GPS: where am I on the trail ----------
+const toXY=(lon,lat,lat0)=>[lon*111320*Math.cos(lat0*Math.PI/180), lat*110540];
+function distToSeg(p,a,b){
+  const dx=b[0]-a[0], dy=b[1]-a[1], L2=dx*dx+dy*dy;
+  let t=L2?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/L2:0; t=Math.max(0,Math.min(1,t));
+  return Math.hypot(p[0]-a[0]-t*dx, p[1]-a[1]-t*dy);
+}
+function nearestTrail(lat,lon){
+  if(!trailsGeo) return null;
+  const P=toXY(lon,lat,lat); let best={d:Infinity,f:null};
+  for(const f of trailsGeo.features){
+    const cs=f.geometry.coordinates;
+    // quick skip if far away
+    if(Math.abs(cs[0][1]-lat)>0.3 || Math.abs(cs[0][0]-lon)>0.4) continue;
+    for(let i=0;i<cs.length-1;i++){
+      const d=distToSeg(P,toXY(cs[i][0],cs[i][1],lat),toXY(cs[i+1][0],cs[i+1][1],lat));
+      if(d<best.d) best={d,f};
+    }
+  }
+  return best.f?best:null;
+}
+function bearingWord(lat1,lon1,lat2,lon2){
+  const y=Math.sin((lon2-lon1)*Math.PI/180)*Math.cos(lat2*Math.PI/180);
+  const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)-Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos((lon2-lon1)*Math.PI/180);
+  const deg=(Math.atan2(y,x)*180/Math.PI+360)%360;
+  return ["north","northeast","east","southeast","south","southwest","west","northwest"][Math.round(deg/45)%8];
+}
+const fmtDist=m=>m<300?`${Math.round(m*3.281)} ft`:`${(m/1609.34).toFixed(m<16093?1:0)} mi`;
+function nearestParking(lat,lon){
+  let best=null;
+  SPOTS.forEach(s=>parkingOf(s).forEach(p=>{ const d=miles({lat,lon},p)*1609.34; if(!best||d<best.d) best={d,p,s}; }));
+  return best;
+}
+function updateGpsPanel(lat,lon,acc){
+  const nt=nearestTrail(lat,lon), np=nearestParking(lat,lon);
+  let html="";
+  if(np && np.d<250) html+=`<div class="ok">📍 You're at ${esc(np.p.name)}.</div>`;
+  if(nt){
+    const t=esc(trailTitle(nt.f.properties));
+    if(nt.d<=Math.max(40,acc)) html+=`<div class="ok">✓ On ${t}</div>`;
+    else if(nt.d<=150) html+=`<div>Nearest motorcycle trail: <b>${t}</b>, ${fmtDist(nt.d)} away</div>`;
+    else if(!(np && np.d<250)) html+=`<div class="bad">⚠ You're ${fmtDist(nt.d)} from the nearest mapped motorcycle trail (${t}).</div>`;
+  }
+  if(np && np.d>=250) html+=`<div>Parking: <b>${esc(np.p.name)}</b> is ${fmtDist(np.d)} ${bearingWord(lat,lon,np.p.lat,np.p.lon)} (straight line). <a href="#" onclick="map.fitBounds(L.latLngBounds([[${lat},${lon}],[${np.p.lat},${np.p.lon}]]),{padding:[40,40]});return false">Show</a></div>`;
+  html+=`<div class="gps-foot"><small>GPS accuracy ±${fmtDist(acc)} · GPS works without cell signal</small> <button onclick="toggleTrack()" id="trackBtn">${trackOn?"⏸ Pause track":"⏺ Record track"}</button> <button onclick="clearTrack()">Clear track</button> <button onclick="routeToParking()">➜ Route back to parking</button></div>`;
+  $("#gpsPanel").innerHTML=html; $("#gpsPanel").classList.add("show");
+}
+// breadcrumb track, saved on the phone
+let track=[], trackOn=true;
+function loadTrack(){
+  try{ const t=JSON.parse(localStorage.getItem("track")||"null"); if(t && t.day===new Date().toDateString()) track=t.pts; trackOn=localStorage.getItem("trackOn")!=="0"; }catch(e){}
+  trackLine=L.polyline(track,{color:"#7b2ff7",weight:4,opacity:.8}).addTo(map);
+}
+function saveTrack(){ try{ localStorage.setItem("track",JSON.stringify({day:new Date().toDateString(),pts:track.slice(-5000)})); }catch(e){} }
+function toggleTrack(){ trackOn=!trackOn; try{localStorage.setItem("trackOn",trackOn?"1":"0")}catch(e){} if(lastFix) updateGpsPanel(...lastFix); }
+function clearTrack(){ track=[]; trackLine.setLatLngs([]); saveTrack(); }
 function startWatch(){
   if(watchId!==null || !navigator.geolocation) return;
+  $("#gpsPanel").innerHTML="Finding your location…"; $("#gpsPanel").classList.add("show");
   watchId=navigator.geolocation.watchPosition(p=>{
-    const ll=[p.coords.latitude,p.coords.longitude];
-    me={lat:ll[0],lon:ll[1]};
-    if(!meMarker){
-      meCircle=L.circle(ll,{radius:p.coords.accuracy,color:"#2f7bf6",weight:1,fillOpacity:.12}).addTo(map);
-      meMarker=L.marker(ll,{icon:L.divIcon({className:"",html:'<div class="me-dot"></div>',iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:1000}).addTo(map);
-    }else{ meMarker.setLatLng(ll); meCircle.setLatLng(ll).setRadius(p.coords.accuracy); }
-    if(follow) map.setView(ll, Math.max(map.getZoom(),14));
-  },()=>{ $("#mapInfo").textContent="Turn on location for this site to see yourself on the map."; },
-  {enableHighAccuracy:true, maximumAge:5000, timeout:20000});
+    const lat=p.coords.latitude, lon=p.coords.longitude, acc=p.coords.accuracy||50, ll=[lat,lon];
+    const first=!meMarker;
+    me={lat,lon}; lastFix=[lat,lon,acc];
+    const hd=p.coords.heading, moving=(p.coords.speed||0)>1 && hd!=null && !isNaN(hd);
+    const html=`<div class="me-dot">${moving?`<div class="me-arrow" style="transform:rotate(${hd}deg)"></div>`:""}</div>`;
+    if(first){
+      meCircle=L.circle(ll,{radius:acc,color:"#2f7bf6",weight:1,fillOpacity:.12,interactive:false}).addTo(map);
+      meMarker=L.marker(ll,{icon:L.divIcon({className:"",html,iconSize:[22,22],iconAnchor:[11,11]}),zIndexOffset:1000}).addTo(map);
+      if(!focusId) map.setView(ll,Math.max(map.getZoom(),13));
+    }else{ meMarker.setLatLng(ll); meMarker.setIcon(L.divIcon({className:"",html,iconSize:[22,22],iconAnchor:[11,11]})); meCircle.setLatLng(ll).setRadius(acc); }
+    if(trackOn && acc<=60){
+      const last=track[track.length-1];
+      if(!last || miles({lat:last[0],lon:last[1]},{lat,lon})*1609.34>15){ track.push([+lat.toFixed(6),+lon.toFixed(6)]); trackLine.setLatLngs(track); saveTrack(); }
+    }
+    if(follow) map.setView(ll, Math.max(map.getZoom(),15));
+    updateGpsPanel(lat,lon,acc);
+    if(routeDest && Date.now()-lastRouteAt>15000) drawRoute(false);
+  },err=>{ $("#gpsPanel").innerHTML=err.code===1?"Location is blocked. Allow location for this site in your phone's settings to see where you are.":"Can't get a GPS fix yet. Step into the open and wait a moment."; },
+  {enableHighAccuracy:true, maximumAge:3000, timeout:30000});
 }
 function showOnMap(lat,lon){ openTab("map"); setTimeout(()=>map.setView([lat,lon],15),80); }
+
+
+// ---------- Trail routing: highlight the way from where you are to the branch you pick ----------
+let graph=null, routeLayer=null, routeDest=null, routeFromGps=false, lastRouteAt=0, branchesGeo=null;
+function gkey(lon,lat){ return Math.round(lat*1e4)+","+Math.round(lon*1e4); }
+function buildGraph(){
+  const feats=[...(trailsGeo?trailsGeo.features.map(f=>[f,true]):[]), ...(branchesGeo?branchesGeo.features.map(f=>[f,false]):[])];
+  const nodes=new Map(), adj=new Map(), cells=new Map();
+  const node=(lon,lat)=>{ const k=gkey(lon,lat); if(!nodes.has(k)){ nodes.set(k,[lon,lat]); adj.set(k,[]);
+      const c=Math.round(lat*1e3)+","+Math.round(lon*1e3); (cells.get(c)||cells.set(c,[]).get(c)).push(k); } return k; };
+  const len=(a,b)=>miles({lat:a[1],lon:a[0]},{lat:b[1],lon:b[0]})*1609.34;
+  const addEdge=(a,b,info)=>{ if(a===b) return; const d=len(nodes.get(a),nodes.get(b)); adj.get(a).push([b,d,info]); adj.get(b).push([a,d,info]); };
+  const ends=[];
+  feats.forEach(([f,ok])=>{
+    const p=f.properties, info={t:ok?trailTitle(p):(p.name||(p.hw==="track"?"Dirt road":"Unnamed trail"))+(p.ref&&!ok?" ("+p.ref+")":""), ok};
+    const cs=f.geometry.coordinates; let prev=null;
+    cs.forEach((c,i)=>{ const k=node(c[0],c[1]); if(prev) addEdge(prev,k,info); prev=k; if(i===0||i===cs.length-1) ends.push(k); });
+  });
+  // join trail ends to the nearest point on another line within 30 m (data sources don't always share exact points)
+  const near=(k,maxM)=>{ const [lon,lat]=nodes.get(k); let best=null;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){ const c=(Math.round(lat*1e3)+dy)+","+(Math.round(lon*1e3)+dx);
+      (cells.get(c)||[]).forEach(o=>{ if(o===k) return; if(adj.get(k).some(e=>e[0]===o)) return; const d=len(nodes.get(k),nodes.get(o)); if(d<=maxM&&(!best||d<best.d)) best={o,d}; }); }
+    return best; };
+  ends.forEach(k=>{ const b=near(k,30); if(b) addEdge(k,b.o,{t:"connector",ok:true,conn:true}); });
+  graph={nodes,adj,cells};
+}
+function snap(lat,lon,maxM=800){
+  if(!graph) return null; let best=null;
+  for(let r=0;r<=8 && !best;r++){
+    for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){ if(Math.max(Math.abs(dx),Math.abs(dy))!==r) continue;
+      const c=(Math.round(lat*1e3)+dy)+","+(Math.round(lon*1e3)+dx);
+      (graph.cells.get(c)||[]).forEach(k=>{ const n=graph.nodes.get(k); const d=miles({lat,lon},{lat:n[1],lon:n[0]})*1609.34; if(!best||d<best.d) best={k,d}; }); }
+  }
+  return best && best.d<=maxM ? best : null;
+}
+function dijkstra(src,dst){
+  const dist=new Map([[src,0]]), prev=new Map(), heap=[[0,src]], done=new Set();
+  const push=x=>{ heap.push(x); let i=heap.length-1; while(i>0){ const p=(i-1)>>1; if(heap[p][0]<=heap[i][0]) break; [heap[p],heap[i]]=[heap[i],heap[p]]; i=p; } };
+  const pop=()=>{ const top=heap[0], last=heap.pop(); if(heap.length){ heap[0]=last; let i=0; for(;;){ let l=2*i+1,r=l+1,m=i; if(l<heap.length&&heap[l][0]<heap[m][0]) m=l; if(r<heap.length&&heap[r][0]<heap[m][0]) m=r; if(m===i) break; [heap[m],heap[i]]=[heap[i],heap[m]]; i=m; } } return top; };
+  while(heap.length){ const [d,u]=pop(); if(done.has(u)) continue; done.add(u); if(u===dst) break;
+    for(const [v,w,info] of graph.adj.get(u)){ const nd=d+w*(info.ok?1:1.15); if(nd<(dist.get(v)??Infinity)){ dist.set(v,nd); prev.set(v,[u,info,w]); push([nd,v]); } } }
+  if(!prev.has(dst) && src!==dst) return null;
+  const path=[dst], legs=[]; let cur=dst;
+  while(cur!==src){ const [u,info,w]=prev.get(cur); path.push(u);
+    const t=info.conn?(legs[0]?.t||"connector"):info.t;
+    if(legs[0] && legs[0].t===t){ legs[0].m+=w; } else legs.unshift({t,m:w,ok:info.ok}); cur=u; }
+  return {path:path.reverse(), legs};
+}
+function routeTo(lat,lon,label){
+  if(!graph) buildGraph();
+  routeDest={lat,lon,label:label||"selected point"};
+  map.closePopup();
+  drawRoute(true);
+}
+function drawRoute(fit){
+  if(!routeDest) return;
+  let start, from;
+  const meSnap = me ? snap(me.lat,me.lon,2000) : null;
+  if(meSnap){ start=meSnap; from="your location"; routeFromGps=true; }
+  else{
+    const np=nearestParking(routeDest.lat,routeDest.lon);
+    start=np && snap(np.p.lat,np.p.lon,1000); from=np?np.p.name:"parking"; routeFromGps=false;
+  }
+  const end=snap(routeDest.lat,routeDest.lon,300);
+  if(!start||!end){ showRoutePanel(`Couldn't find a trail connection to that point. Try tapping right on a trail line.`); return; }
+  const r=dijkstra(start.k,end.k);
+  if(!r){ showRoutePanel(`These trails don't connect in the map data. The trail lines may have a gap here — check the topo map and signs.`); return; }
+  const coords=r.path.map(k=>{ const n=graph.nodes.get(k); return [n[1],n[0]]; });
+  if(routeLayer) routeLayer.remove();
+  routeLayer=L.layerGroup([
+    L.polyline(coords,{color:"#fff",weight:11,opacity:.95,interactive:false}),
+    L.polyline(coords,{color:"#0a84ff",weight:6,opacity:1,interactive:false}),
+    L.circleMarker(coords[coords.length-1],{radius:8,color:"#fff",weight:3,fillColor:"#0a84ff",fillOpacity:1}).bindTooltip("Destination",{direction:"top"})
+  ]).addTo(map);
+  if(fit) map.fitBounds(L.latLngBounds(coords),{padding:[50,50],maxZoom:16});
+  const total=r.legs.reduce((a,l)=>a+l.m,0);
+  const unconf=r.legs.filter(l=>!l.ok).reduce((a,l)=>a+l.m,0);
+  const legs=r.legs.filter(l=>l.m>=15).map((l,i)=>`<li class="${l.ok?"":"bad"}">${i===0?"Start on":"Then"} <b>${esc(l.t)}</b> for ${fmtDist(l.m)}${l.ok?"":" – motorcycles not confirmed"}</li>`).join("");
+  showRoutePanel(`<b>Route to ${esc(routeDest.label)}</b>: ${fmtDist(total)} along the trails from ${esc(from)}.
+    ${unconf>15?`<div class="bad">⚠ ${fmtDist(unconf)} of this route is on trails where motorcycle use isn't confirmed. Check the signs.</div>`:""}
+    <ol class="legs">${legs}</ol>`);
+  lastRouteAt=Date.now();
+}
+function showRoutePanel(html){
+  $("#routePanel").innerHTML=`<div class="tp-head"><span>${html}</span><button class="x" onclick="clearRoute()">✕</button></div>`;
+  $("#routePanel").classList.add("show");
+}
+function clearRoute(){ routeDest=null; if(routeLayer){ routeLayer.remove(); routeLayer=null; } $("#routePanel").classList.remove("show"); }
+function routeToParking(){
+  if(!me) return; const np=nearestParking(me.lat,me.lon); if(np) routeTo(np.p.lat,np.p.lon,np.p.name);
+}
+function whereAmI(){
+  openTab("map");
+  follow=true; $("#locBtn").classList.add("follow");
+  if(meMarker) map.setView(meMarker.getLatLng(),Math.max(map.getZoom(),15));
+  startWatch();
+}
+
+// ---------- Offline maps ----------
+function offlineSaved(id){ try{ return !!localStorage.getItem("offline-"+id); }catch(e){ return false; } }
+function lon2x(lon,z){ return Math.floor((lon+180)/360*2**z); }
+function lat2y(lat,z){ const r=lat*Math.PI/180; return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*2**z); }
+async function saveOffline(id){
+  const msg=$("#saveMsg");
+  if(!("serviceWorker" in navigator) || !navigator.serviceWorker.controller){ msg.textContent="Offline saving needs one reload of the app first. Reload and try again."; return; }
+  const s=SPOTS.find(x=>x.id===id);
+  const b=boundsOf(featuresFor(f=>(f.properties.spots||[]).includes(id)), parkingOf(s)).pad(0.1);
+  if(!b.isValid()){ msg.textContent="Nothing to save here."; return; }
+  const urls=[];
+  for(let z=10; z<=16; z++){
+    const x0=lon2x(b.getWest(),z), x1=lon2x(b.getEast(),z), y0=lat2y(b.getNorth(),z), y1=lat2y(b.getSouth(),z);
+    for(let x=x0;x<=x1;x++) for(let y=y0;y<=y1;y++) urls.push(`https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/${z}/${y}/${x}`);
+  }
+  if(urls.length>4000){ msg.textContent=`That area is too big (${urls.length} map tiles). Zoom in on one trail and save from there.`; return; }
+  const cache=await caches.open("tiles-v1");
+  let done=0, failed=0;
+  const worker=async()=>{ while(urls.length){ const u=urls.pop();
+    try{ if(!(await cache.match(u))){ const r=await fetch(u,{mode:"cors"}); if(r.ok) await cache.put(u,r); else failed++; } }catch(e){ failed++; }
+    done++; if(done%25===0) msg.textContent=`Saving… ${done} tiles`; } };
+  const total=urls.length;
+  msg.textContent=`Saving ${total} map tiles…`;
+  await Promise.all(Array.from({length:6},worker));
+  for(const f of ["./","index.html","spots.json","data.json","trails.geojson","branches.geojson","status.json"]){ try{ await (await caches.open("app-v1")).add(f); }catch(e){} }
+  try{ localStorage.setItem("offline-"+id, new Date().toISOString()); }catch(e){}
+  msg.textContent= failed ? `Saved ${total-failed} of ${total} tiles. Try again on Wi-Fi to fill gaps.` : `Saved for offline ✓ (${total} tiles). Open the app before you lose signal.`;
+}
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 
 // ---------- Start ----------
 async function refreshAll(){
@@ -384,11 +678,7 @@ async function refreshAll(){
 }
 $("#tabList").onclick=()=>openTab("list");
 $("#tabMap").onclick=()=>openTab("map");
-$("#locBtn").onclick=()=>{
-  follow=!follow; $("#locBtn").classList.toggle("follow",follow);
-  if(follow && meMarker) map.setView(meMarker.getLatLng(),Math.max(map.getZoom(),14));
-  startWatch();
-};
+$("#locBtn").onclick=whereAmI;
 window.addEventListener("resize",setHeaderVar);
 $("#sort").onchange=render;
 $("#openOnly").onchange=render;
