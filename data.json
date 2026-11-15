@@ -412,11 +412,11 @@
   }
  },
  "sources": {
-  "osm": "ok, 200 segments",
-  "usfs_trails": "ok, 65 segments, 48 trails",
+  "osm": "ok, 426 segments",
+  "usfs_trails": "ok, 102 segments, 83 trails",
   "usfs_orv_roads": "ok, 1 roads",
   "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
-  "branches": "ok, 1066 segments",
+  "branches": "ok, 1038 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 69 alerts scanned",
