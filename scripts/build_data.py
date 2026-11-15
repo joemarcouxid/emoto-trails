@@ -200,6 +200,10 @@ log(f"trails: {len(fs_feats)} usfs + {len(osm_keep)} osm")
 
 # ---------------- 2b. Branch trails near each spot (motorcycle use NOT confirmed) ----------------
 # Shown in gray so riders can see where trails split, without the app suggesting they're legal.
+def norm(n):
+    return re.sub(r"\b(road|rd)\b", "rd", (n or "").lower()).strip()
+gd_names = {norm(f["properties"].get("name")) for f in confirmed + street_only
+            if f["properties"].get("src") == "greendot" and f["properties"].get("name")}
 ctx = []
 conf_osm_ids = {f["properties"].get("id") for f in osm_feats}
 try:
@@ -224,6 +228,7 @@ try:
         no = num(t.get("ref") or t.get("name"))
         if no and no in fs_nos: continue  # already drawn as a confirmed Forest Service route
         if t.get("motorcycle") in ("yes", "designated", "permissive"): continue
+        if t.get("name") and norm(t["name"]) in gd_names: continue  # OpenStreetMap copy of a green-dot road
         props = {"src": "osm", "id": el["id"], "name": t.get("name"), "ref": t.get("ref"), "hw": t.get("highway"),
                  "moto": t.get("motorcycle"), "access": t.get("access"), "old": t.get("old_name")}
         ctx.append({"type": "Feature", "geometry": {"type": "LineString", "coordinates": thin([[round(p["lon"], 5), round(p["lat"], 5)] for p in g], 15)},
