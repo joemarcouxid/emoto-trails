@@ -643,6 +643,7 @@ function drawRoute(fit){
   ]).addTo(map);
   if(fit) map.fitBounds(L.latLngBounds(coords),{padding:[50,50],maxZoom:16});
   const total=r.legs.reduce((a,l)=>a+l.m,0);
+  if(total<30){ showRoutePanel(`You're already at ${esc(routeDest.label)}.`); return; }
   const unconf=r.legs.filter(l=>!l.ok).reduce((a,l)=>a+l.m,0);
   const legs=r.legs.filter(l=>l.m>=15).map((l,i)=>`<li class="${l.ok?"":"bad"}">${i===0?"Start on":"Then"} <b>${esc(l.t)}</b> for ${fmtDist(l.m)}${l.ok?"":" – motorcycles not confirmed"}</li>`).join("");
   showRoutePanel(`<b>Route to ${esc(routeDest.label)}</b>: ${fmtDist(total)} along the trails from ${esc(from)}.
