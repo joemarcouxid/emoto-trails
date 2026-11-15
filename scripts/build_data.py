@@ -79,6 +79,8 @@ try:
     q = f"""[out:json][timeout:180];(
       way["highway"~"^(path|track|bridleway|footway|cycleway)$"]["motorcycle"~"^(yes|designated|permissive)$"]({b});
       way["highway"]["name"~"(^| )(ORV|OHV)( |$)|Motorcycle"]["motorcycle"!~"^(no|private)$"]({b});
+      way["highway"="path"]["motor_vehicle"~"^(yes|designated|permissive)$"]["motorcycle"!~"^(no|private)$"]({b});
+      way["highway"~"^(path|track)$"]["atv"~"^(yes|designated|permissive)$"]["motorcycle"!~"^(no|private)$"]({b});
     );out tags geom;"""
     j = None
     for srv in ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
@@ -97,7 +99,7 @@ try:
         t = el.get("tags", {})
         props = {"src": "osm", "id": el["id"], "name": t.get("name"), "ref": t.get("ref"),
                  "no": num(t.get("ref") or t.get("name")), "hw": t.get("highway"),
-                 "surface": t.get("surface"), "moto": t.get("motorcycle")}
+                 "surface": t.get("surface"), "moto": t.get("motorcycle") or (("atv: " + t["atv"]) if t.get("atv") else ("motor vehicles: " + t["motor_vehicle"]) if t.get("motor_vehicle") else None)}
         osm_feats.append({"type": "Feature",
                           "geometry": {"type": "LineString", "coordinates": thin([[round(p["lon"], 5), round(p["lat"], 5)] for p in g])},
                           "properties": {k: v for k, v in props.items() if v}})
@@ -156,7 +158,7 @@ except Exception as e:
 road_ids = sorted({r for s in spots for r in s.get("roadIds", [])})
 if road_ids:
     try:
-        j = get(f"{FS}/EDW_RoadBasic_01/MapServer/0/query", {"where": "id IN (" + ",".join(f"'{r}'" for r in road_ids) + ")",
+        j = get(f"{FS}/EDW_RoadBasic_01/MapServer/0/query", {"where": "security_id='0617' AND id IN (" + ",".join(f"'{r}'" for r in road_ids) + ")",
                 "outFields": "id,name", "returnGeometry": "true", "outSR": "4326", "geometryPrecision": "5", "f": "json"})
         for f in j.get("features", []):
             a = f["attributes"]

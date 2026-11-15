@@ -657,7 +657,6 @@
    "trails": "FS road 8200-112 and FS 8215 (East Fork Mitchell Rd) loop, plus a short link on FS 8200",
    "trailNos": [],
    "roadIds": [
-    "8200112",
     "8215000"
    ],
    "keywords": [
@@ -665,7 +664,7 @@
     "8215",
     "8200"
    ],
-   "notes": "A Forest Service ATV/ORV route on forest roads, not single track. ORVs are allowed only on the loop roads and the short connecting section of FS 8200.",
+   "notes": "A Forest Service ATV/ORV route on forest roads, not single track. ORVs are allowed only on the loop roads (FS 8200-112 and FS 8215) and the short connecting section of FS 8200. The map draws FS 8215; FS 8200-112 isn't in the Forest Service road data, so follow the signs for that part.",
    "pass": "ORV tag",
    "parking": [
     {
