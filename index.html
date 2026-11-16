@@ -106,6 +106,7 @@
   #locBtn{top:62px!important;bottom:auto!important;right:10px!important;width:44px;height:44px;padding:0!important;font-size:20px!important;border-radius:50%!important}
   #gpsPanel{right:10px!important;bottom:52px!important}
   #mapInfo{right:10px!important}
+  .drv{color:var(--muted);font-weight:400;font-size:12.5px}
   footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
 </style>
 </head>
@@ -116,7 +117,7 @@
   <div class="tabs"><button id="tabList" class="on">List</button><button id="tabMap">Map</button><button id="whereBtn" onclick="whereAmI()">📍 Where am I</button></div>
   <div class="bar listonly">
     <select id="sort" aria-label="Sort by">
-      <option value="dist">Closest first</option>
+      <option value="dist">Shortest drive first</option>
       <option value="open">Open first</option>
       <option value="cond">Best conditions</option>
       <option value="rating">Highest rated</option>
@@ -151,7 +152,7 @@
   <div id="mapInfo">Loading trails…</div>
   <button id="locBtn" class="mapbtn" title="Where am I? Show and follow my location" aria-label="Where am I">📍</button>
 </div>
-<footer>Weather: Open-Meteo · Trails: USDA Forest Service, © OpenStreetMap contributors · Parking: Forest Service, WA DNR · Snow: NRCS SNOTEL · Status can change fast. Check the official link before you drive.</footer>
+<footer>Weather: Open-Meteo · Trails: USDA Forest Service, © OpenStreetMap contributors · Parking: Forest Service, WA DNR · Snow: NRCS SNOTEL · Drive times: OSRM, © OpenStreetMap · Status can change fast. Check the official link before you drive.</footer>
 
 <script>
 // ---------- Data ----------
@@ -245,6 +246,42 @@ async function loadWeather(){
   }catch(e){ console.log("weather failed",e); }
 }
 
+
+// ---------- Drive times (OSRM routing; dirt/gravel roads counted at ~15 mph) ----------
+let DRIVE={}, driveCell=null, driveRun=0;
+const MIN_SPEED=6.7; // m/s ≈ 15 mph. The router assumes walking pace on forest roads, which is far too slow.
+function pkey(p){ return p.lat.toFixed(5)+","+p.lon.toFixed(5); }
+function driveOf(s){
+  const ds=parkingOf(s).map(p=>DRIVE[pkey(p)]).filter(Boolean);
+  return ds.length ? ds.reduce((a,b)=>a.min<=b.min?a:b) : null;
+}
+async function computeDrives(){
+  const o=me||HOME, cell=o.lat.toFixed(2)+","+o.lon.toFixed(2), run=++driveRun, today=new Date().toDateString();
+  if(cell!==driveCell){
+    driveCell=cell; DRIVE={};
+    try{ const c=JSON.parse(localStorage.getItem("drive-"+cell)||"null"); if(c&&c.day===today) DRIVE=c.d; }catch(e){}
+    render();
+  }
+  const all=[]; SPOTS.forEach(s=>parkingOf(s).forEach(p=>all.push(p)));
+  all.sort((a,b)=>miles(o,a)-miles(o,b));
+  for(const p of all){
+    if(run!==driveRun) return;            // location changed; a newer run took over
+    const k=pkey(p); if(DRIVE[k]) continue;
+    try{
+      const r=await (await fetch(`https://router.project-osrm.org/route/v1/driving/${o.lon},${o.lat};${p.lon},${p.lat}?steps=true&overview=false`)).json();
+      if(r.code==="Ok"){
+        const rt=r.routes[0]; let sec=0;
+        rt.legs[0].steps.forEach(st=>{ sec+= st.distance>0 && st.distance/Math.max(st.duration,1)<MIN_SPEED ? st.distance/MIN_SPEED : st.duration; });
+        DRIVE[k]={min:Math.round(sec/60), mi:+(rt.distance/1609.34).toFixed(1)};
+        try{ localStorage.setItem("drive-"+cell, JSON.stringify({day:today,d:DRIVE})); }catch(e){}
+        render();
+      }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,1100)); // be polite to the free routing server
+  }
+}
+const fmtMin=m=>m<60?`${m} min`:`${Math.floor(m/60)} hr ${m%60?m%60+" min":""}`.trim();
+
 // ---------- List ----------
 function parkingHTML(s){
   const ps=parkingOf(s);
@@ -254,7 +291,8 @@ function parkingHTML(s){
     const ok = p.check==="ok"||p.check==="moved" ? `<span class="ok">✓ Matches the official record.${checked}</span>`
              : p.check==="multi-source"||p.check==="official" ? `<span class="ok">✓ ${esc(p.srcNote||"Several sources agree")}</span>`
              : p.check==="missing" ? `<span class="bad">⚠ Official record not found in the last check</span>` : "";
-    return `<div class="pk"><b>${esc(p.name)}</b>${p.siteStatus==="closed"?' <span class="bad">(marked closed)</span>':""}<br>
+    const dv=DRIVE[pkey(p)];
+    return `<div class="pk"><b>${esc(p.name)}</b>${p.siteStatus==="closed"?' <span class="bad">(marked closed)</span>':""}${dv?` <span class="drv">· about ${fmtMin(dv.min)} drive, ${dv.mi} mi</span>`:""}<br>
       ${esc(p.road||"")}${p.fee?` Fee: ${esc(p.fee)}.`:""}<br>
       <small>${SRC_WORDS[p.src]||""}${p.url?` · <a href="${p.url}" target="_blank" rel="noopener">official page ↗</a>`:""} · ${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</small><br>
       <small>${ok}</small>
@@ -266,20 +304,21 @@ function render(){
   let rows = SPOTS.map(s=>{
     const st=statusOf(s), w=weather[s.id];
     const p0=parkingOf(s)[0]||s;
-    return {s, st, w, d:miles(here,p0), cond:w?w.cond:"Unknown", r:myRating(s.id)||s.rating||0};
+    const dv=driveOf(s), d=miles(here,p0);
+    return {s, st, w, d, dv, t:dv?dv.min:d*2.5+30, cond:w?w.cond:"Unknown", r:myRating(s.id)||s.rating||0};
   });
   if($("#openOnly").checked) rows=rows.filter(x=>x.st.key!=="closed");
   const sorters={
-    dist:(a,b)=>a.d-b.d,
-    open:(a,b)=>statusRank(a.st)-statusRank(b.st)||a.d-b.d,
-    cond:(a,b)=>statusRank(a.st)-statusRank(b.st)||COND_RANK[b.cond]-COND_RANK[a.cond]||a.d-b.d,
-    rating:(a,b)=>b.r-a.r||a.d-b.d,
-    easy:(a,b)=>a.s.diff-b.s.diff||a.d-b.d,
-    hard:(a,b)=>b.s.diff-a.s.diff||a.d-b.d
+    dist:(a,b)=>a.t-b.t,
+    open:(a,b)=>statusRank(a.st)-statusRank(b.st)||a.t-b.t,
+    cond:(a,b)=>statusRank(a.st)-statusRank(b.st)||COND_RANK[b.cond]-COND_RANK[a.cond]||a.t-b.t,
+    rating:(a,b)=>b.r-a.r||a.t-b.t,
+    easy:(a,b)=>a.s.diff-b.s.diff||a.t-b.t,
+    hard:(a,b)=>b.s.diff-a.s.diff||a.t-b.t
   };
   rows.sort(sorters[$("#sort").value]);
 
-  $("#list").innerHTML = rows.length ? rows.map(({s,st,w,d,cond})=>{
+  $("#list").innerHTML = rows.length ? rows.map(({s,st,w,d,dv,cond})=>{
     const sd=DATA.spots[s.id]||{};
     const condCls = /Snow|Muddy/.test(cond)?"warn":"";
     const mine=myRating(s.id);
@@ -291,7 +330,7 @@ function render(){
     return `<div class="card">
       <div class="top">
         <div><div class="name">${esc(s.name)}<button class="pbtn" title="Parking" aria-label="Where to park" onclick="togglePark('${s.id}')">P</button><button class="tbtn" title="Show trails on topo map" aria-label="Show trails on map" onclick="focusSpot('${s.id}')">🗺</button></div><div class="area">${esc(s.area)}</div></div>
-        <div class="dist">${d.toFixed(0)} mi<small>straight line</small></div>
+        <div class="dist">${dv?`${fmtMin(dv.min)}<small>${dv.mi} mi drive</small>`:`${d.toFixed(0)} mi<small>straight line</small>`}</div>
       </div>
       <div class="pills">
         <span class="pill ${st.key}">${st.text}</span>
@@ -317,7 +356,7 @@ function render(){
   }).join("") : `<div class="card">Nothing open right now with these filters. Uncheck "Open only" to see everything.</div>`;
 
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
-  $("#updated").textContent = `Updated ${t}. Conditions are estimated from recent rain, snow and temperature.` +
+  $("#updated").textContent = `Updated ${t}. Drive times are estimates (dirt and gravel roads counted at about 15 mph). Conditions are estimated from recent rain, snow and temperature.` +
     (DATA.updated?` Parking and closure checks from ${DATA.updated}.`:"") + (statusDate?` Your posted status as of ${statusDate}.`:"");
 }
 function togglePark(id){ const el=document.getElementById("park-"+id); if(el) el.classList.toggle("show"); }
@@ -328,8 +367,8 @@ function locate(){
     if(!navigator.geolocation){ $("#where").textContent="Distances from "+HOME.label; return res(); }
     navigator.geolocation.getCurrentPosition(p=>{
       me={lat:p.coords.latitude, lon:p.coords.longitude};
-      $("#where").textContent="Distances from your current location to parking"; res();
-    },()=>{ $("#where").textContent="Location off – distances from "+HOME.label; res(); },
+      $("#where").textContent="Drive times from your current location to parking"; res();
+    },()=>{ $("#where").textContent="Location off – drive times from "+HOME.label; res(); },
     {enableHighAccuracy:false, timeout:8000, maximumAge:600000});
   });
 }
@@ -716,8 +755,8 @@ $("#locBtn").onclick=whereAmI;
 window.addEventListener("resize",setHeaderVar);
 $("#sort").onchange=render;
 $("#openOnly").onchange=render;
-$("#refresh").onclick=async()=>{ await locate(); await refreshAll(); };
-refreshAll().then(()=>locate()).then(render);
+$("#refresh").onclick=async()=>{ await locate(); await refreshAll(); computeDrives(); };
+refreshAll().then(()=>locate()).then(()=>{ render(); computeDrives(); });
 </script>
 </body>
 </html>
