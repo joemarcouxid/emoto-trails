@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-15",
+ "updated": "2026-11-16",
  "spots": {
   "devils-gulch": {
    "signals": [],
@@ -13,13 +13,7 @@
      "status": "none"
     }
    ],
-   "snow": {
-    "station": "Grouse Camp",
-    "elevFt": 5390,
-    "miles": 7.9,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "beehive": {
    "signals": [
@@ -48,13 +42,7 @@
      "status": "none"
     }
    ],
-   "snow": {
-    "station": "Upper Wheeler",
-    "elevFt": 4330,
-    "miles": 3.3,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "mission-ridge": {
    "signals": [],
@@ -68,13 +56,7 @@
      "status": "none"
     }
    ],
-   "snow": {
-    "station": "Grouse Camp",
-    "elevFt": 5390,
-    "miles": 2.9,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "tronsen": {
    "signals": [],
@@ -104,13 +86,7 @@
      "status": "none"
     }
    ],
-   "snow": {
-    "station": "Grouse Camp",
-    "elevFt": 5390,
-    "miles": 4.1,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "mad-river": {
    "signals": [],
@@ -183,24 +159,12 @@
      "check": "official"
     }
    ],
-   "snow": {
-    "station": "Upper Wheeler",
-    "elevFt": 4330,
-    "miles": 4.0,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "naneum": {
    "signals": [],
    "parking": [],
-   "snow": {
-    "station": "Trough",
-    "elevFt": 5480,
-    "miles": 5.5,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "taneum": {
    "signals": [
@@ -340,13 +304,7 @@
      "status": "open"
     }
    ],
-   "snow": {
-    "station": "Green Lake",
-    "elevFt": 5920,
-    "miles": 7.6,
-    "depthIn": 4,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "reiter": {
    "signals": [],
@@ -382,13 +340,7 @@
      "status": "open"
     }
    ],
-   "snow": {
-    "station": "Deer Pass",
-    "elevFt": 3360,
-    "miles": 20.8,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   },
   "elbe-hills": {
    "signals": [],
@@ -402,13 +354,7 @@
      "status": "open"
     }
    ],
-   "snow": {
-    "station": "Mowich",
-    "elevFt": 3170,
-    "miles": 11.8,
-    "depthIn": 0,
-    "date": "2026-11-14"
-   }
+   "snow": null
   }
  },
  "sources": {
@@ -420,6 +366,6 @@
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 69 alerts scanned",
-  "snotel": "ok, 16 spots near a station, 6 readings"
+  "snotel": "failed: HTTP Error 502: Bad Gateway"
  }
 }
