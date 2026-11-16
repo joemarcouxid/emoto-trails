@@ -107,6 +107,17 @@
   #gpsPanel{right:10px!important;bottom:52px!important}
   #mapInfo{right:10px!important}
   .drv{color:var(--muted);font-weight:400;font-size:12.5px}
+  .pnl-head{display:flex;align-items:center;gap:6px}
+  .pnl-title{flex:1;min-width:0;cursor:pointer}
+  .pnl-btn{flex:none;border:1px solid #d0d0d0;background:#fff;border-radius:8px;width:32px;height:30px;font-size:15px;line-height:1;cursor:pointer;color:var(--ink)}
+  .pnl-body{margin-top:6px}
+  .pnl.min .pnl-body,#trailPanel.min .pnl-body,#routePanel.min .pnl-body,#gpsPanel.min .pnl-body{display:none}
+  #trailPanel.min .pnl-title,#routePanel.min .pnl-title,#gpsPanel.min .pnl-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #trailPanel.min .pnl-title *,#routePanel.min .pnl-title *,#gpsPanel.min .pnl-title *{display:inline}
+  #trailPanel.min,#routePanel.min,#gpsPanel.min{padding:5px 8px;max-height:none}
+  #gpsPanel .pnl-title>div{margin:0}
+  .muted{color:var(--muted);font-weight:400}
+  #trailPanel{max-height:38%!important}
   footer{font-size:12px;color:var(--muted);text-align:center;padding:16px}
 </style>
 </head>
@@ -409,7 +420,8 @@ function initMap(){
   L.control.layers({"USGS Topo (works offline)":usgs,"OpenTopoMap":otm,"Satellite + topo":sat},null,{position:"topright"}).addTo(map);
   L.control.scale({imperial:true,metric:false,position:"topleft"}).addTo(map);
   drawPins();
-  map.on("dragstart",()=>{ if(follow){ follow=false; $("#locBtn").classList.remove("follow"); } });
+  map.on("dragstart",()=>{ if(follow){ follow=false; $("#locBtn").classList.remove("follow"); }
+    setPanelMin("trailPanel",true); setPanelMin("routePanel",true); });
   map.on("zoomend",()=>{ if(branchLayer){ map.getZoom()>=12?branchLayer.addTo(map):branchLayer.remove(); } });
   loadTrails();
   loadTrack();
@@ -489,14 +501,16 @@ function focusSpot(id){
   feats.forEach(f=>{ const k=trailKey(f.properties); byKey[k]=byKey[k]||{t:trailTitle(f.properties),mi:0}; byKey[k].mi+=f.properties.len||0; });
   const chips=Object.entries(byKey).sort((a,b)=>b[1].mi-a[1].mi)
     .map(([k,v])=>`<button class="chip" onclick="highlightTrail('${k.replace(/'/g,"\\'")}')">${esc(v.t)} <small>${v.mi.toFixed(1)} mi</small></button>`).join("");
-  $("#trailPanel").innerHTML=`<div class="tp-head"><b>${esc(s.name)}</b><button class="x" onclick="clearFocus()">✕</button></div>
-    <div class="chips">${chips||"<small>No mapped motorcycle trails yet for this spot.</small>"}</div>
-    <div class="tp-foot"><button class="sv" onclick="saveOffline('${id}')">⬇ Save this area for offline</button> <small id="saveMsg">${offlineSaved(id)?"Saved for offline ✓":""}</small></div>`;
-  $("#trailPanel").classList.add("show");
+  panelMin.trailPanel=false;
+  $("#trailPanel").innerHTML=panelHTML("trailPanel",`<b>${esc(s.name)}</b> <small class="muted">· ${Object.keys(byKey).length} trails</small>`,
+    `<div class="chips">${chips||"<small>No mapped motorcycle trails yet for this spot.</small>"}</div>
+    <div class="tp-foot"><button class="sv" onclick="saveOffline('${id}')">⬇ Save this area for offline</button> <small id="saveMsg">${offlineSaved(id)?"Saved for offline ✓":""}</small></div>`,"clearFocus()");
+  $("#trailPanel").classList.add("show"); setPanelMin("trailPanel",false);
 }
 function highlightTrail(key,fit=true){
   const feats=featuresFor(f=>trailKey(f.properties)===key);
   if(!feats.length) return;
+  if(fit) setPanelMin("trailPanel",true);
   restyle(f=>trailKey(f.properties)===key);
   labelTrails(feats);
   const b=boundsOf(feats); if(fit && b.isValid()) map.fitBounds(b,{padding:[40,40],maxZoom:16});
@@ -506,6 +520,22 @@ function clearFocus(){
   if(trailLayer) trailLayer.eachLayer(l=>l.setStyle(baseStyle(l.feature)));
   if(labelLayer) labelLayer.clearLayers();
 }
+
+// ---------- Collapsible map panels ----------
+const panelMin={trailPanel:false,routePanel:false,gpsPanel:false};
+function panelHTML(id,title,body,closeFn){
+  const m=panelMin[id];
+  return `<div class="pnl-head"><div class="pnl-title" onclick="togglePanel('${id}')">${title}</div>
+    <button class="pnl-btn" title="${m?"Expand":"Collapse"}" aria-label="${m?"Expand":"Collapse"}" onclick="togglePanel('${id}')">${m?"▴":"▾"}</button>
+    ${closeFn?`<button class="pnl-btn" title="Close" aria-label="Close" onclick="${closeFn}">✕</button>`:""}</div>
+    <div class="pnl-body">${body||""}</div>`;
+}
+function setPanelMin(id,v){
+  panelMin[id]=v; const el=document.getElementById(id); if(!el) return;
+  el.classList.toggle("min",v);
+  const b=el.querySelector(".pnl-btn"); if(b){ b.textContent=v?"▴":"▾"; b.title=b.ariaLabel=v?"Expand":"Collapse"; }
+}
+function togglePanel(id){ setPanelMin(id,!panelMin[id]); }
 
 // ---------- GPS: where am I on the trail ----------
 const toXY=(lon,lat,lat0)=>[lon*111320*Math.cos(lat0*Math.PI/180), lat*110540];
@@ -552,7 +582,10 @@ function updateGpsPanel(lat,lon,acc){
   }
   if(np && np.d>=250) html+=`<div>Parking: <b>${esc(np.p.name)}</b> is ${fmtDist(np.d)} ${bearingWord(lat,lon,np.p.lat,np.p.lon)} (straight line). <a href="#" onclick="map.fitBounds(L.latLngBounds([[${lat},${lon}],[${np.p.lat},${np.p.lon}]]),{padding:[40,40]});return false">Show</a></div>`;
   html+=`<div class="gps-foot"><small>GPS accuracy ±${fmtDist(acc)} · GPS works without cell signal</small> <button onclick="toggleTrack()" id="trackBtn">${trackOn?"⏸ Pause track":"⏺ Record track"}</button> <button onclick="clearTrack()">Clear track</button> <button onclick="routeToParking()">➜ Route back to parking</button></div>`;
-  $("#gpsPanel").innerHTML=html; $("#gpsPanel").classList.add("show");
+  const tmp=document.createElement("div"); tmp.innerHTML=html;
+  const first=tmp.firstElementChild; const title=first?first.outerHTML:"📍 Location"; if(first) first.remove();
+  $("#gpsPanel").innerHTML=panelHTML("gpsPanel",title,tmp.innerHTML,null);
+  $("#gpsPanel").classList.add("show"); setPanelMin("gpsPanel",panelMin.gpsPanel);
 }
 // breadcrumb track, saved on the phone
 let track=[], trackOn=true;
@@ -565,7 +598,7 @@ function toggleTrack(){ trackOn=!trackOn; try{localStorage.setItem("trackOn",tra
 function clearTrack(){ track=[]; trackLine.setLatLngs([]); saveTrack(); }
 function startWatch(){
   if(watchId!==null || !navigator.geolocation) return;
-  $("#gpsPanel").innerHTML="Finding your location…"; $("#gpsPanel").classList.add("show");
+  $("#gpsPanel").innerHTML=panelHTML("gpsPanel","📍 Finding your location…","",null); $("#gpsPanel").classList.add("show");
   watchId=navigator.geolocation.watchPosition(p=>{
     const lat=p.coords.latitude, lon=p.coords.longitude, acc=p.coords.accuracy||50, ll=[lat,lon];
     const first=!meMarker;
@@ -584,9 +617,11 @@ function startWatch(){
     if(follow) map.setView(ll, Math.max(map.getZoom(),15));
     updateGpsPanel(lat,lon,acc);
     if(routeDest && Date.now()-lastRouteAt>15000) drawRoute(false);
-  },err=>{ $("#gpsPanel").innerHTML=err.code===1?"Location is blocked. Allow location for this site in your phone's settings to see where you are.":"Can't get a GPS fix yet. Step into the open and wait a moment."; },
+  },err=>{ $("#gpsPanel").innerHTML=panelHTML("gpsPanel", err.code===1?"📍 Location is blocked":"📍 No GPS fix yet",
+      err.code===1?"Allow location for this site in your phone's settings to see where you are.":"Step into the open and wait a moment.","hideGps()"); setPanelMin("gpsPanel",panelMin.gpsPanel); },
   {enableHighAccuracy:true, maximumAge:3000, timeout:30000});
 }
+function hideGps(){ $("#gpsPanel").classList.remove("show"); }
 function showOnMap(lat,lon){ openTab("map"); setTimeout(()=>map.setView([lat,lon],15),80); }
 
 
@@ -658,6 +693,7 @@ function ensureGraph(pts){
   if(!covered){ const big=[box[0]-0.1,box[1]-0.1,box[2]+0.1,box[3]+0.1]; buildGraph(big); }
 }
 function routeTo(lat,lon,label){
+  panelMin.routePanel=false;
   routeDest={lat,lon,label:label||"selected point"};
   map.closePopup();
   drawRoute(true);
@@ -690,14 +726,15 @@ function drawRoute(fit){
   if(total<30){ showRoutePanel(`You're already at ${esc(routeDest.label)}.`); return; }
   const unconf=r.legs.filter(l=>!l.ok).reduce((a,l)=>a+l.m,0);
   const legs=r.legs.filter(l=>l.m>=15).map((l,i)=>`<li class="${l.ok?"":"bad"}">${i===0?"Start on":"Then"} <b>${esc(l.t)}</b> for ${fmtDist(l.m)}${l.ok?"":" – motorcycles not confirmed"}</li>`).join("");
-  showRoutePanel(`<b>Route to ${esc(routeDest.label)}</b>: ${fmtDist(total)} along the trails from ${esc(from)}.
+  showRoutePanel(`<b>Route to ${esc(routeDest.label)}</b>: ${fmtDist(total)}${unconf>15?' <span class="bad">⚠</span>':""}`,
+    `<div>Along the trails from ${esc(from)}.</div>
     ${unconf>15?`<div class="bad">⚠ ${fmtDist(unconf)} of this route is on trails where motorcycle use isn't confirmed. Check the signs.</div>`:""}
     <ol class="legs">${legs}</ol>`);
   lastRouteAt=Date.now();
 }
-function showRoutePanel(html){
-  $("#routePanel").innerHTML=`<div class="tp-head"><span>${html}</span><button class="x" onclick="clearRoute()">✕</button></div>`;
-  $("#routePanel").classList.add("show");
+function showRoutePanel(title,body){
+  $("#routePanel").innerHTML=panelHTML("routePanel",title,body,"clearRoute()");
+  $("#routePanel").classList.add("show"); setPanelMin("routePanel",panelMin.routePanel);
 }
 function clearRoute(){ routeDest=null; if(routeLayer){ routeLayer.remove(); routeLayer=null; } $("#routePanel").classList.remove("show"); }
 function routeToParking(){
