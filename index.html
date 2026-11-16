@@ -449,7 +449,7 @@ async function loadTrails(){
       }}).addTo(map);
     labelLayer=L.layerGroup().addTo(map);
     $("#mapInfo").innerHTML=`<span class="lg" style="background:${TRAIL_COLOR}"></span>Motorcycle trail (Forest Service) <span class="lg" style="background:${OSM_COLOR}"></span>Motorcycle trail (OpenStreetMap) <span class="lg" style="background:${GD_COLOR}"></span>Green-dot road (ORV OK) <span class="lg" style="background:#4a6fa5"></span>Street-legal only <span class="lg gray"></span>Branch trail – motorcycles not confirmed <b style="color:#2f5fb3">P</b> parking`;
-    if(focusId) focusSpot(focusId);
+    if(focusId) focusSpot(focusId,true);
   }catch(e){ $("#mapInfo").textContent="Trail lines didn't load. The topo map still shows trails as thin dashed lines."; }
   try{
     const b=await loadJSON("branches.geojson"); branchesGeo=b; graph=null;
@@ -486,7 +486,7 @@ function restyle(isOn){
     if(on) l.bringToFront();
   });
 }
-function focusSpot(id){
+function focusSpot(id,keepState=false){
   focusId=id;
   if(!document.body.classList.contains("map")) openTab("map");
   if(!trailsGeo) return;  // runs again once trails load
@@ -501,11 +501,11 @@ function focusSpot(id){
   feats.forEach(f=>{ const k=trailKey(f.properties); byKey[k]=byKey[k]||{t:trailTitle(f.properties),mi:0}; byKey[k].mi+=f.properties.len||0; });
   const chips=Object.entries(byKey).sort((a,b)=>b[1].mi-a[1].mi)
     .map(([k,v])=>`<button class="chip" onclick="highlightTrail('${k.replace(/'/g,"\\'")}')">${esc(v.t)} <small>${v.mi.toFixed(1)} mi</small></button>`).join("");
-  panelMin.trailPanel=false;
+  if(!keepState) panelMin.trailPanel=false;
   $("#trailPanel").innerHTML=panelHTML("trailPanel",`<b>${esc(s.name)}</b> <small class="muted">· ${Object.keys(byKey).length} trails</small>`,
     `<div class="chips">${chips||"<small>No mapped motorcycle trails yet for this spot.</small>"}</div>
     <div class="tp-foot"><button class="sv" onclick="saveOffline('${id}')">⬇ Save this area for offline</button> <small id="saveMsg">${offlineSaved(id)?"Saved for offline ✓":""}</small></div>`,"clearFocus()");
-  $("#trailPanel").classList.add("show"); setPanelMin("trailPanel",false);
+  $("#trailPanel").classList.add("show"); setPanelMin("trailPanel",panelMin.trailPanel);
 }
 function highlightTrail(key,fit=true){
   const feats=featuresFor(f=>trailKey(f.properties)===key);
