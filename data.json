@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-17",
+ "updated": "2026-11-18",
  "spots": {
   "devils-gulch": {
    "signals": [],
@@ -17,8 +17,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 7.9,
-    "depthIn": 1,
-    "date": "2026-11-16"
+    "depthIn": 0,
+    "date": "2026-11-17"
    }
   },
   "beehive": {
@@ -53,7 +53,7 @@
     "elevFt": 4330,
     "miles": 3.3,
     "depthIn": 0,
-    "date": "2026-11-16"
+    "date": "2026-11-17"
    }
   },
   "mission-ridge": {
@@ -72,8 +72,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 2.9,
-    "depthIn": 1,
-    "date": "2026-11-16"
+    "depthIn": 0,
+    "date": "2026-11-17"
    }
   },
   "tronsen": {
@@ -108,8 +108,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 4.1,
-    "depthIn": 1,
-    "date": "2026-11-16"
+    "depthIn": 0,
+    "date": "2026-11-17"
    }
   },
   "mad-river": {
@@ -188,7 +188,7 @@
     "elevFt": 4330,
     "miles": 4.0,
     "depthIn": 0,
-    "date": "2026-11-16"
+    "date": "2026-11-17"
    }
   },
   "naneum": {
@@ -199,7 +199,7 @@
     "elevFt": 5480,
     "miles": 5.5,
     "depthIn": 0,
-    "date": "2026-11-16"
+    "date": "2026-11-17"
    }
   },
   "taneum": {
@@ -344,8 +344,8 @@
     "station": "Green Lake",
     "elevFt": 5920,
     "miles": 7.6,
-    "depthIn": 4,
-    "date": "2026-11-16"
+    "depthIn": 5,
+    "date": "2026-11-17"
    }
   },
   "reiter": {
@@ -387,7 +387,7 @@
     "elevFt": 3360,
     "miles": 20.8,
     "depthIn": 0,
-    "date": "2026-11-16"
+    "date": "2026-11-17"
    }
   },
   "elbe-hills": {
@@ -407,7 +407,7 @@
     "elevFt": 3170,
     "miles": 11.8,
     "depthIn": 0,
-    "date": "2026-11-16"
+    "date": "2026-11-17"
    }
   }
  },
