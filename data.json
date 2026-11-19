@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18",
+ "updated": "2026-11-19",
  "spots": {
   "devils-gulch": {
    "signals": [],
@@ -17,8 +17,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 7.9,
-    "depthIn": 0,
-    "date": "2026-11-17"
+    "depthIn": 1,
+    "date": "2026-11-18"
    }
   },
   "beehive": {
@@ -52,8 +52,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 3.3,
-    "depthIn": 0,
-    "date": "2026-11-17"
+    "depthIn": 6,
+    "date": "2026-11-18"
    }
   },
   "mission-ridge": {
@@ -72,8 +72,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 2.9,
-    "depthIn": 0,
-    "date": "2026-11-17"
+    "depthIn": 1,
+    "date": "2026-11-18"
    }
   },
   "tronsen": {
@@ -108,8 +108,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 4.1,
-    "depthIn": 0,
-    "date": "2026-11-17"
+    "depthIn": 1,
+    "date": "2026-11-18"
    }
   },
   "mad-river": {
@@ -187,8 +187,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 4.0,
-    "depthIn": 0,
-    "date": "2026-11-17"
+    "depthIn": 6,
+    "date": "2026-11-18"
    }
   },
   "naneum": {
@@ -198,8 +198,8 @@
     "station": "Trough",
     "elevFt": 5480,
     "miles": 5.5,
-    "depthIn": 0,
-    "date": "2026-11-17"
+    "depthIn": 6,
+    "date": "2026-11-18"
    }
   },
   "taneum": {
@@ -344,8 +344,8 @@
     "station": "Green Lake",
     "elevFt": 5920,
     "miles": 7.6,
-    "depthIn": 5,
-    "date": "2026-11-17"
+    "depthIn": 9,
+    "date": "2026-11-18"
    }
   },
   "reiter": {
@@ -387,7 +387,7 @@
     "elevFt": 3360,
     "miles": 20.8,
     "depthIn": 0,
-    "date": "2026-11-17"
+    "date": "2026-11-18"
    }
   },
   "elbe-hills": {
@@ -407,7 +407,7 @@
     "elevFt": 3170,
     "miles": 11.8,
     "depthIn": 0,
-    "date": "2026-11-17"
+    "date": "2026-11-18"
    }
   }
  },
@@ -416,10 +416,10 @@
   "usfs_trails": "ok, 102 segments, 83 trails",
   "usfs_orv_roads": "ok, 1 roads",
   "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
-  "branches": "ok, 1038 segments",
+  "branches": "ok, 1022 segments",
   "parking": "ok",
   "fires": "ok",
-  "usfs_alerts": "ok, 69 alerts scanned",
+  "usfs_alerts": "ok, 70 alerts scanned",
   "snotel": "ok, 16 spots near a station, 6 readings"
  }
 }
