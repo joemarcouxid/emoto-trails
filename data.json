@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20",
+ "updated": "2026-11-21",
  "spots": {
   "devils-gulch": {
    "signals": [],
@@ -18,7 +18,7 @@
     "elevFt": 5390,
     "miles": 7.9,
     "depthIn": 2,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   },
   "beehive": {
@@ -52,8 +52,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 3.3,
-    "depthIn": 7,
-    "date": "2026-11-19"
+    "depthIn": 6,
+    "date": "2026-11-20"
    }
   },
   "mission-ridge": {
@@ -73,7 +73,7 @@
     "elevFt": 5390,
     "miles": 2.9,
     "depthIn": 2,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   },
   "tronsen": {
@@ -109,7 +109,7 @@
     "elevFt": 5390,
     "miles": 4.1,
     "depthIn": 2,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   },
   "mad-river": {
@@ -174,7 +174,7 @@
     "elevFt": 3590,
     "miles": 8.7,
     "depthIn": 0,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   },
   "stemilt": {
@@ -193,8 +193,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 4.0,
-    "depthIn": 7,
-    "date": "2026-11-19"
+    "depthIn": 6,
+    "date": "2026-11-20"
    }
   },
   "naneum": {
@@ -205,7 +205,7 @@
     "elevFt": 5480,
     "miles": 5.5,
     "depthIn": 6,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   },
   "taneum": {
@@ -350,8 +350,8 @@
     "station": "Green Lake",
     "elevFt": 5920,
     "miles": 7.6,
-    "depthIn": 11,
-    "date": "2026-11-19"
+    "depthIn": 10,
+    "date": "2026-11-20"
    }
   },
   "reiter": {
@@ -393,7 +393,7 @@
     "elevFt": 3360,
     "miles": 20.8,
     "depthIn": 0,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   },
   "elbe-hills": {
@@ -413,7 +413,7 @@
     "elevFt": 3170,
     "miles": 11.8,
     "depthIn": 0,
-    "date": "2026-11-19"
+    "date": "2026-11-20"
    }
   }
  },
@@ -422,7 +422,7 @@
   "usfs_trails": "ok, 102 segments, 83 trails",
   "usfs_orv_roads": "ok, 1 roads",
   "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
-  "branches": "ok, 1038 segments",
+  "branches": "ok, 1017 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 70 alerts scanned",
