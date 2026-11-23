@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22",
+ "updated": "2026-11-23",
  "spots": {
   "devils-gulch": {
    "signals": [],
@@ -17,8 +17,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 7.9,
-    "depthIn": 2,
-    "date": "2026-11-21"
+    "depthIn": 6,
+    "date": "2026-11-22"
    }
   },
   "beehive": {
@@ -52,8 +52,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 3.3,
-    "depthIn": 8,
-    "date": "2026-11-21"
+    "depthIn": 10,
+    "date": "2026-11-22"
    }
   },
   "mission-ridge": {
@@ -72,8 +72,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 2.9,
-    "depthIn": 2,
-    "date": "2026-11-21"
+    "depthIn": 6,
+    "date": "2026-11-22"
    }
   },
   "tronsen": {
@@ -108,8 +108,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 4.1,
-    "depthIn": 2,
-    "date": "2026-11-21"
+    "depthIn": 6,
+    "date": "2026-11-22"
    }
   },
   "mad-river": {
@@ -173,8 +173,8 @@
     "station": "Pope Ridge",
     "elevFt": 3590,
     "miles": 8.7,
-    "depthIn": 1,
-    "date": "2026-11-21"
+    "depthIn": 2,
+    "date": "2026-11-22"
    }
   },
   "stemilt": {
@@ -193,8 +193,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 4.0,
-    "depthIn": 8,
-    "date": "2026-11-21"
+    "depthIn": 10,
+    "date": "2026-11-22"
    }
   },
   "naneum": {
@@ -204,8 +204,8 @@
     "station": "Trough",
     "elevFt": 5480,
     "miles": 5.5,
-    "depthIn": 6,
-    "date": "2026-11-20"
+    "depthIn": 10,
+    "date": "2026-11-22"
    }
   },
   "taneum": {
@@ -351,7 +351,7 @@
     "elevFt": 5920,
     "miles": 7.6,
     "depthIn": 11,
-    "date": "2026-11-21"
+    "date": "2026-11-22"
    }
   },
   "reiter": {
@@ -393,7 +393,7 @@
     "elevFt": 3360,
     "miles": 20.8,
     "depthIn": 0,
-    "date": "2026-11-21"
+    "date": "2026-11-22"
    }
   },
   "elbe-hills": {
@@ -413,16 +413,16 @@
     "elevFt": 3170,
     "miles": 11.8,
     "depthIn": 0,
-    "date": "2026-11-21"
+    "date": "2026-11-22"
    }
   }
  },
  "sources": {
-  "osm": "failed, kept last copy: all overpass servers failed",
-  "usfs_trails": "ok, 37 segments, 28 trails",
+  "osm": "ok, 426 segments",
+  "usfs_trails": "ok, 102 segments, 83 trails",
   "usfs_orv_roads": "ok, 1 roads",
   "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
-  "branches": "ok, 1058 segments",
+  "branches": "ok, 1038 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 70 alerts scanned",
