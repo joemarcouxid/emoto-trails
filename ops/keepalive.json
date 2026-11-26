@@ -1,0 +1,6 @@
+{
+  "about": "Services the keep-alive job pings every 2 days so free plans don't pause. Supabase keys here are the public 'publishable' keys that are already in each website's code. Never put a secret or service_role key here.",
+  "supabase": [
+    {"name": "StridePride", "url": "https://ygdclbvsuixxnxclgdwl.supabase.co", "key": "sb_publishable_OEdtI8JasbdQ82Gta8taCg_MvMSeVVj", "table": "site_events"}
+  ]
+}

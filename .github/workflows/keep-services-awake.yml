@@ -1,0 +1,33 @@
+name: Keep services awake
+
+on:
+  schedule:
+    - cron: "41 15 */2 * *"   # every 2 days (Supabase free projects pause after 7 days idle)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Ping Supabase projects
+        run: python3 ops/keepalive.py
+      - name: Keep this repo's scheduled jobs from being disabled
+        # GitHub turns off scheduled jobs in public repos after 60 days with no commits.
+        # The daily trail-data job normally commits; this is a backup if it ever stops.
+        run: |
+          last=$(git log -1 --format=%ct)
+          now=$(date +%s)
+          if [ $(( (now - last) / 86400 )) -ge 45 ]; then
+            date -u +"%Y-%m-%dT%H:%MZ" > ops/heartbeat.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add ops/heartbeat.txt && git commit -m "Heartbeat: keep scheduled jobs active" && git push
+          else
+            echo "Repo had a commit in the last 45 days; no heartbeat needed."
+          fi
