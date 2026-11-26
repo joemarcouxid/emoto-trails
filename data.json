@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25",
+ "updated": "2026-11-26",
  "spots": {
   "devils-gulch": {
    "signals": [],
@@ -17,8 +17,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 7.9,
-    "depthIn": 6,
-    "date": "2026-11-24"
+    "depthIn": 5,
+    "date": "2026-11-25"
    }
   },
   "beehive": {
@@ -52,8 +52,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 3.3,
-    "depthIn": 10,
-    "date": "2026-11-24"
+    "depthIn": 8,
+    "date": "2026-11-25"
    }
   },
   "mission-ridge": {
@@ -72,8 +72,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 2.9,
-    "depthIn": 6,
-    "date": "2026-11-24"
+    "depthIn": 5,
+    "date": "2026-11-25"
    }
   },
   "tronsen": {
@@ -108,8 +108,8 @@
     "station": "Grouse Camp",
     "elevFt": 5390,
     "miles": 4.1,
-    "depthIn": 6,
-    "date": "2026-11-24"
+    "depthIn": 5,
+    "date": "2026-11-25"
    }
   },
   "mad-river": {
@@ -173,8 +173,8 @@
     "station": "Pope Ridge",
     "elevFt": 3590,
     "miles": 8.7,
-    "depthIn": 4,
-    "date": "2026-11-24"
+    "depthIn": 2,
+    "date": "2026-11-25"
    }
   },
   "stemilt": {
@@ -193,8 +193,8 @@
     "station": "Upper Wheeler",
     "elevFt": 4330,
     "miles": 4.0,
-    "depthIn": 10,
-    "date": "2026-11-24"
+    "depthIn": 8,
+    "date": "2026-11-25"
    }
   },
   "naneum": {
@@ -205,7 +205,7 @@
     "elevFt": 5480,
     "miles": 5.5,
     "depthIn": 9,
-    "date": "2026-11-24"
+    "date": "2026-11-25"
    }
   },
   "taneum": {
@@ -351,7 +351,7 @@
     "elevFt": 5920,
     "miles": 7.6,
     "depthIn": 11,
-    "date": "2026-11-24"
+    "date": "2026-11-25"
    }
   },
   "reiter": {
@@ -393,7 +393,7 @@
     "elevFt": 3360,
     "miles": 20.8,
     "depthIn": 0,
-    "date": "2026-11-24"
+    "date": "2026-11-25"
    }
   },
   "elbe-hills": {
@@ -413,16 +413,16 @@
     "elevFt": 3170,
     "miles": 11.8,
     "depthIn": 0,
-    "date": "2026-11-24"
+    "date": "2026-11-25"
    }
   }
  },
  "sources": {
-  "osm": "ok, 426 segments",
-  "usfs_trails": "ok, 102 segments, 83 trails",
+  "osm": "ok, 373 segments",
+  "usfs_trails": "ok, 101 segments, 84 trails",
   "usfs_orv_roads": "ok, 1 roads",
   "greendot": "ok, 2127 ORV segments, 333 street-legal-only",
-  "branches": "ok, 1038 segments",
+  "branches": "ok, 1039 segments",
   "parking": "ok",
   "fires": "ok",
   "usfs_alerts": "ok, 71 alerts scanned",
